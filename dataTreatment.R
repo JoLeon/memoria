@@ -190,20 +190,89 @@ write.table(
 # QUERY PARA USUARIOS
 users <- dbGetQuery(con, 
 	"SELECT 
-		users.id, 
+		u.id, 
 		puntos_historicos, 
 		puntos, 
-		users.created_at AS fecha_afiliacion, 
-		IFNULL(universidades.nombre,'No especificado') as uni, 
-		IFNULL(IFNULL(generos,infos.sexo),'No especificado') as genero, 
-		IFNULL(infos.f_nacimiento,'No especificado') as nacimiento 
+		u.created_at AS fecha_afiliacion, 
+		IFNULL(universidades.nombre,'NA') as uni, 
+		IFNULL(IFNULL(genero,infos.sexo),'NA') as genero, 
+		IFNULL(infos.f_nacimiento,'NA') as nacimiento,
+		(puntos_historicos - puntos) as puntos_gastados,
+		(SELECT
+			count(1)
+		FROM
+			shares
+		WHERE
+			shares.user_id = u.id
+		) AS shares_totales,
+		(SELECT
+			categoria_id
+		FROM
+			videos
+			JOIN shares ON shares.video_id = videos.id
+		WHERE
+			shares.user_id = u.id
+			AND videos.categoria_id != 0
+		GROUP BY
+			categoria_id
+		ORDER BY
+			count(categoria_id)
+		LIMIT 
+			1
+		) AS categoria_dominante,
+		(SELECT
+			count(1)
+		FROM
+			users
+		WHERE
+			referenced_by = u.id
+		) AS recruitments,
+		(SELECT
+			count(distinct canjes.producto_id)
+		FROM
+			canjes
+			JOIN productos ON productos.id = canjes.producto_id
+		WHERE
+			canjes.user_id = u.id
+			AND productos.concurso = 1
+		) AS concursos_participados,
+		(SELECT
+			count(1)
+		FROM
+			canjes
+			JOIN productos ON productos.id = canjes.producto_id
+		WHERE
+			canjes.user_id = u.id
+			AND productos.concurso = 0
+		) AS premios_canjeados,
+		(SELECT
+			sum(canjes.cantidad)
+		FROM
+			canjes
+			JOIN productos ON productos.id = canjes.producto_id
+		WHERE
+			canjes.user_id = u.id
+			AND productos.concurso = 1
+		) AS tickets_canjeados
 	FROM 
-		users 
-		LEFT JOIN universidades ON users.universidad_id=universidades.id 
-		LEFT JOIN infos ON infos.user_id = users.id 
+		users AS u
+		LEFT JOIN universidades ON u.universidad_id = universidades.id 
+		LEFT JOIN infos ON infos.user_id = u.id 
 	WHERE 
-		users.tipo=1 
-		AND users.estado=1
-		AND users.id != 0
-		AND user.id != 8"
+		u.tipo=1 
+		AND u.estado=1
+		AND u.id != 0
+		AND u.id != 8"
+)
+write.table(
+	users, 
+	file="/home/jleon/Memoria/Data/users.csv", 
+	append=FALSE, 
+	quote=FALSE, 
+	sep=";", 
+	eol="\n", 
+	na="NA", 
+	row.names=FALSE, 
+	col.names=TRUE, 
+	fileEncoding="UTF-8"
 )
