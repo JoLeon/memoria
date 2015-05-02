@@ -276,3 +276,28 @@ write.table(
 	col.names=TRUE, 
 	fileEncoding="UTF-8"
 )
+# QUERY PARA VISTAS
+views <- dbGetQuery(con,
+	"SELECT
+		views.created_at AS Fecha,
+		views.locale_country AS Pais,
+		views.country_code AS 'Codigo pais',
+		views.locale_city AS Ciudad,
+		shares.id AS Share,
+		shares.video_id AS Video
+	FROM
+		views
+		JOIN shares ON shares.id = views.share_id"
+)
+write.table(
+	views, 
+	file="/home/jleon/Memoria/Data/views.csv", 
+	append=FALSE, 
+	quote=FALSE, 
+	sep=";", 
+	eol="\n", 
+	na="NA", 
+	row.names=FALSE, 
+	col.names=TRUE, 
+	fileEncoding="UTF-8"
+)
