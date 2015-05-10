@@ -14,6 +14,7 @@ videos <- dbGetQuery(con,
 		puja AS points_per_view, 
 		videos.created_at AS release_date,
 		views AS total_views,
+		(inversion_total - saldo_actual) AS points_given,
 		#
 		#
 		#			INFORMACION DE CANTIDAD DE SHARES
