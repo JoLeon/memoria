@@ -201,8 +201,8 @@ users <- dbGetQuery(con,
 		IFNULL(universidades.nombre,'NA') as uni, 
 		IFNULL(IFNULL(genero,infos.sexo),'NA') as genero, 
 		IFNULL(infos.f_nacimiento,'NA') as nacimiento,
-		HOUR(u.created_at) AS 'Hora afiliacion',
-		WEEKDAY(u.created_at) AS 'Dia afiliacion',
+		HOUR(CONVERT_TZ(u.created_at,'+00:00','-03:00')) AS 'Hora afiliacion',
+		WEEKDAY(CONVERT_TZ(u.created_at,'+00:00','-03:00')) AS 'Dia afiliacion',
 		(puntos_historicos - puntos) as puntos_gastados,
 		(SELECT
 			count(1)
@@ -221,7 +221,7 @@ users <- dbGetQuery(con,
 			shares.user_id = u.id
 			AND videos.categoria_id != 0
 		GROUP BY
-			categoria_id
+			categorias.nombre
 		ORDER BY
 			count(categoria_id)
 		LIMIT 
@@ -328,8 +328,8 @@ write.table(
 views <- dbGetQuery(con,
 	"SELECT
 		views.created_at AS Fecha,
-		HOUR(views.created_at) AS 'Hora vista',
-		WEEKDAY(views.created_at) AS 'Dia vista',
+		HOUR(CONVERT_TZ(views.created_at,'+00:00','-03:00')) AS 'Hora vista',
+		WEEKDAY(CONVERT_TZ(views.created_at,'+00:00','-03:00')) AS 'Dia vista',
 		views.locale_country AS Pais,
 		views.country_code AS 'Codigo pais',
 		views.locale_city AS Ciudad,
@@ -356,8 +356,8 @@ write.table(
 shares <- dbGetQuery(con,
 	"SELECT
 		shares.created_at AS Fecha,
-		HOUR(shares.created_at) AS 'Hora share',
-		WEEKDAY(shares.created_at) AS 'Dia share',
+		HOUR(CONVERT_TZ(shares.created_at,'+00:00','-03:00')) AS 'Hora share',
+		WEEKDAY(CONVERT_TZ(shares.created_at,'+00:00','-03:00')) AS 'Dia share',
 		count(views.id) AS vistas
 	FROM
 		shares
