@@ -204,6 +204,7 @@ users <- dbGetQuery(con,
 		HOUR(CONVERT_TZ(u.created_at,'+00:00','-03:00')) AS 'Hora afiliacion',
 		WEEKDAY(CONVERT_TZ(u.created_at,'+00:00','-03:00')) AS 'Dia afiliacion',
 		(puntos_historicos - puntos) as puntos_gastados,
+		u.hascode,
 		(SELECT
 			count(1)
 		FROM
@@ -261,7 +262,7 @@ users <- dbGetQuery(con,
 			canjes.user_id = u.id
 			AND productos.concurso = 1
 		) AS tickets_canjeados,
-		(SELECT
+		IFNULL((SELECT
 			datediff(s1.created_at, s2.created_at)
 		FROM
 			shares s1 
@@ -270,8 +271,8 @@ users <- dbGetQuery(con,
 			AND s2.id = (SELECT min(id) FROM shares WHERE user_id= u.id)
 		WHERE
 			s1.user_id = u.id
-		) AS difference_last_and_first_share,
-		(SELECT 
+		),-1) AS difference_last_and_first_share,
+		IFNULL((SELECT 
 			stddev(
 				datediff(
 					created_at,
@@ -291,8 +292,8 @@ users <- dbGetQuery(con,
 		WHERE 
 			s1.user_id = u.id
 		ORDER BY id ASC
-		) AS stdv_share_difference,
-		(SELECT
+		),-1) AS stdv_share_difference,
+		IFNULL((SELECT
 			datediff(shares.created_at, canjes.created_at)
 		FROM
 			shares
@@ -301,7 +302,7 @@ users <- dbGetQuery(con,
 			AND canjes.id = (SELECT min(id) FROM canjes WHERE user_id = u.id)
 		WHERE
 			shares.user_id = u.id
-		) AS difference_last_raffle_first_share
+		),-1) AS difference_last_raffle_first_share
 	FROM 
 		users AS u
 		LEFT JOIN universidades ON u.universidad_id = universidades.id 
