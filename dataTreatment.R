@@ -15,7 +15,7 @@ videos <- dbGetQuery(con,
 		videos.created_at AS release_date,
 		videos.release_date_yt AS release_date_youtube,
 		videos.duracion AS duracion,
-		TIMESTAMPDIFF(SECOND, videos.release_date_yt, videos.created_at) AS release_difference,
+		IFNULL(TIMESTAMPDIFF(SECOND, videos.release_date_yt, videos.created_at),-1) AS release_difference,
 		views AS total_views,
 		(inversion_total - saldo_actual) AS points_given,
 		#
