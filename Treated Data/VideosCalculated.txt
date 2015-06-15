@@ -1,0 +1,1262 @@
+RELEASE DIFFERENCE
+
+IF [release_difference] < 0 THEN "NA"
+ELSEIF ([release_difference]/(60*60*24)) < 1 THEN "[00] Mismo día"
+ELSEIF ([release_difference]/(60*60*24)) < 2 THEN "[01] 1 día"
+ELSEIF ([release_difference]/(60*60*24)) < 3 THEN "[02] 2 días"
+ELSEIF ([release_difference]/(60*60*24)) < 4 THEN "[03] 3 días"
+ELSEIF ([release_difference]/(60*60*24)) < 5 THEN "[04] 4 días"
+ELSEIF ([release_difference]/(60*60*24)) < 6 THEN "[05] 5 días"
+ELSEIF ([release_difference]/(60*60*24)) < 7 THEN "[06] 6 días"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*1)+1) THEN "[07] 1 semana"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*2)+1) THEN "[08] 2 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*3)+1) THEN "[09] 3 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*4)+1) THEN "[10] 4 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*5)+1) THEN "[11] 5 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*6)+1) THEN "[12] 6 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*7)+1) THEN "[13] 7 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*8)+1) THEN "[14] 8 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*9)+1) THEN "[15] 9 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*10)+1) THEN "[16] 10 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*11)+1) THEN "[17] 11 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*12)+1) THEN "[18] 12 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*13)+1) THEN "[19] 13 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*14)+1) THEN "[20] 14 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*15)+1) THEN "[21] 15 semanas"
+ELSEIF ([release_difference]/(60*60*24)) < ((7*16)+1) THEN "[22] 16 semanas"
+ELSE "[23] 17 semanas o más"
+END
+
+DURACION GRUPOS
+
+IF [duracion] <= 30 THEN "[00] 0 a 30s"
+ELSEIF [duracion] <= 60 THEN "[01] 31 a 60s"
+ELSEIF [duracion] <= 90 THEN "[02] 1:01 a 1:30"
+ELSEIF [duracion] <= 120 THEN "[03] 1:31 a 2:00"
+ELSEIF [duracion] <= 150 THEN "[04] 2:01 a 2:30"
+ELSEIF [duracion] <= 180 THEN "[05] 2:31 a 3:00"
+ELSEIF [duracion] <= 210 THEN "[06] 3:01 a 3:30"
+ELSEIF [duracion] <= 240 THEN "[07] 3:31 a 4:00"
+ELSEIF [duracion] <= 270 THEN "[08] 4:01 a 4:30"
+ELSEIF [duracion] <= 300 THEN "[09] 4:31 a 5:00"
+ELSEIF [duracion] <= 330 THEN "[10] 5:01 a 5:30"
+ELSEIF [duracion] <= 360 THEN "[11] 5:31 a 6:00"
+ELSEIF [duracion] <= 390 THEN "[12] 6:01 a 6:30"
+ELSEIF [duracion] <= 420 THEN "[13] 6:31 a 7:00"
+ELSEIF [duracion] <= 450 THEN "[14] 7:01 a 7:30"
+ELSEIF [duracion] <= 480 THEN "[15] 7:31 a 8:00"
+ELSEIF [duracion] <= 510 THEN "[16] 8:01 a 8:30"
+ELSEIF [duracion] <= 540 THEN "[17] 8:31 a 9:00"
+ELSEIF [duracion] <= 570 THEN "[18] 9:01 a 9:30"
+ELSEIF [duracion] <= 600 THEN "[19] 9:31 a 10:00"
+ELSE "[20] 10:01 o más"
+END
+
+TOTAL VIEWS RANGE
+
+IF 
+[Total Views] < 50 THEN "0 - 49"
+ELSEIF
+[Total Views] < 100 THEN "50 - 99"
+ELSEIF
+[Total Views] < 150 THEN "100 - 149"
+ELSEIF
+[Total Views] < 200 THEN "150 - 199"
+ELSEIF
+[Total Views] < 250 THEN "200 - 249"
+ELSEIF
+[Total Views] < 300 THEN "250 - 299"
+ELSEIF
+[Total Views] < 350 THEN "300 - 349"
+ELSEIF
+[Total Views] < 400 THEN "350 - 399"
+ELSEIF
+[Total Views] < 450 THEN "400 - 449"
+ELSEIF
+[Total Views] < 500 THEN "450 - 499"
+ELSEIF
+[Total Views] < 550 THEN "500 - 549"
+ELSEIF
+[Total Views] < 600 THEN "550 - 599"
+ELSEIF
+[Total Views] < 650 THEN "600 - 649"
+ELSEIF
+[Total Views] < 700 THEN "650 - 699"
+ELSEIF
+[Total Views] < 750 THEN "700 - 749"
+ELSEIF
+[Total Views] < 800 THEN "750 - 799"
+ELSEIF
+[Total Views] < 850 THEN "800 - 849"
+ELSEIF
+[Total Views] < 900 THEN "850 - 899"
+ELSEIF
+[Total Views] < 950 THEN "900 - 949"
+ELSEIF
+[Total Views] < 1000 THEN "950 - 999"
+ELSEIF
+[Total Views] < 1050 THEN "1000 - 1049"
+ELSEIF
+[Total Views] < 1100 THEN "1050 - 1099"
+ELSEIF
+[Total Views] < 1150 THEN "1100 - 1149"
+ELSEIF
+[Total Views] < 1200 THEN "1150 - 1199"
+ELSEIF
+[Total Views] < 1250 THEN "1200 - 1249"
+ELSEIF
+[Total Views] < 1300 THEN "1250 - 1299"
+ELSEIF
+[Total Views] < 1350 THEN "1300 - 1349"
+ELSEIF
+[Total Views] < 1400 THEN "1350 - 1399"
+ELSEIF
+[Total Views] < 1450 THEN "1400 - 1449"
+ELSEIF
+[Total Views] < 1500 THEN "1450 - 1499"
+ELSEIF
+[Total Views] < 1550 THEN "1500 - 1549"
+ELSEIF
+[Total Views] < 1600 THEN "1550 - 1599"
+ELSEIF
+[Total Views] < 1650 THEN "1600 - 1649"
+ELSEIF
+[Total Views] < 1700 THEN "1650 - 1699"
+ELSEIF
+[Total Views] < 1750 THEN "1700 - 1749"
+ELSEIF
+[Total Views] < 1800 THEN "1750 - 1799"
+ELSEIF
+[Total Views] < 1850 THEN "1800 - 1849"
+ELSEIF
+[Total Views] < 1900 THEN "1850 - 1899"
+ELSEIF
+[Total Views] < 1950 THEN "1900 - 1949"
+ELSEIF
+[Total Views] < 2000 THEN "1950 - 1999"
+ELSEIF
+[Total Views] < 2050 THEN "2000 - 2049"
+ELSEIF
+[Total Views] < 2100 THEN "2050 - 2099"
+ELSEIF
+[Total Views] < 2150 THEN "2100 - 2149"
+ELSEIF
+[Total Views] < 2200 THEN "2150 - 2199"
+ELSEIF
+[Total Views] < 2250 THEN "2200 - 2249"
+ELSEIF
+[Total Views] < 2300 THEN "2250 - 2299"
+ELSEIF
+[Total Views] < 2350 THEN "2300 - 2349"
+ELSEIF
+[Total Views] < 2400 THEN "2350 - 2399"
+ELSEIF
+[Total Views] < 2450 THEN "2400 - 2449"
+ELSEIF
+[Total Views] < 2500 THEN "2450 - 2499"
+ELSEIF
+[Total Views] < 2550 THEN "2500 - 2549"
+ELSEIF
+[Total Views] < 2600 THEN "2550 - 2599"
+ELSEIF
+[Total Views] < 2650 THEN "2600 - 2649"
+ELSEIF
+[Total Views] < 2700 THEN "2650 - 2699"
+ELSEIF
+[Total Views] < 2750 THEN "2700 - 2749"
+ELSEIF
+[Total Views] < 2800 THEN "2750 - 2799"
+ELSEIF
+[Total Views] < 2850 THEN "2800 - 2849"
+ELSEIF
+[Total Views] < 2900 THEN "2850 - 2899"
+ELSEIF
+[Total Views] < 2950 THEN "2900 - 2949"
+ELSEIF
+[Total Views] < 3000 THEN "2950 - 2999"
+ELSEIF
+[Total Views] < 3050 THEN "3000 - 3049"
+ELSEIF
+[Total Views] < 3100 THEN "3050 - 3099"
+ELSEIF
+[Total Views] < 3150 THEN "3100 - 3149"
+ELSEIF
+[Total Views] < 3200 THEN "3150 - 3199"
+ELSEIF
+[Total Views] < 3250 THEN "3200 - 3249"
+ELSEIF
+[Total Views] < 3300 THEN "3250 - 3299"
+ELSEIF
+[Total Views] < 3350 THEN "3300 - 3349"
+ELSEIF
+[Total Views] < 3400 THEN "3350 - 3399"
+ELSEIF
+[Total Views] < 3450 THEN "3400 - 3449"
+ELSEIF
+[Total Views] < 3500 THEN "3450 - 3499"
+ELSEIF
+[Total Views] < 3550 THEN "3500 - 3549"
+ELSEIF
+[Total Views] < 3600 THEN "3550 - 3599"
+ELSEIF
+[Total Views] < 3650 THEN "3600 - 3649"
+ELSEIF
+[Total Views] < 3700 THEN "3650 - 3699"
+ELSEIF
+[Total Views] < 3750 THEN "3700 - 3749"
+ELSEIF
+[Total Views] < 3800 THEN "3750 - 3799"
+ELSEIF
+[Total Views] < 3850 THEN "3800 - 3849"
+ELSEIF
+[Total Views] < 3900 THEN "3850 - 3899"
+ELSEIF
+[Total Views] < 3950 THEN "3900 - 3949"
+ELSEIF
+[Total Views] < 4000 THEN "3950 - 3999"
+ELSEIF
+[Total Views] < 4050 THEN "4000 - 4049"
+ELSEIF
+[Total Views] < 4100 THEN "4050 - 4099"
+ELSEIF
+[Total Views] < 4150 THEN "4100 - 4149"
+ELSEIF
+[Total Views] < 4200 THEN "4150 - 4199"
+ELSEIF
+[Total Views] < 4250 THEN "4200 - 4249"
+ELSEIF
+[Total Views] < 4300 THEN "4250 - 4299"
+ELSEIF
+[Total Views] < 4350 THEN "4300 - 4349"
+ELSEIF
+[Total Views] < 4400 THEN "4350 - 4399"
+ELSEIF
+[Total Views] < 4450 THEN "4400 - 4449"
+ELSEIF
+[Total Views] < 4500 THEN "4450 - 4499"
+ELSEIF
+[Total Views] < 4550 THEN "4500 - 4549"
+ELSEIF
+[Total Views] < 4600 THEN "4550 - 4599"
+ELSEIF
+[Total Views] < 4650 THEN "4600 - 4649"
+ELSEIF
+[Total Views] < 4700 THEN "4650 - 4699"
+ELSEIF
+[Total Views] < 4750 THEN "4700 - 4749"
+ELSEIF
+[Total Views] < 4800 THEN "4750 - 4799"
+ELSEIF
+[Total Views] < 4850 THEN "4800 - 4849"
+ELSEIF
+[Total Views] < 4900 THEN "4850 - 4899"
+ELSEIF
+[Total Views] < 4950 THEN "4900 - 4949"
+ELSEIF
+[Total Views] < 5000 THEN "4950 - 4999"
+ELSEIF
+[Total Views] < 5050 THEN "5000 - 5049"
+ELSEIF
+[Total Views] < 5100 THEN "5050 - 5099"
+ELSEIF
+[Total Views] < 5150 THEN "5100 - 5149"
+ELSEIF
+[Total Views] < 5200 THEN "5150 - 5199"
+ELSEIF
+[Total Views] < 5250 THEN "5200 - 5249"
+ELSEIF
+[Total Views] < 5300 THEN "5250 - 5299"
+ELSEIF
+[Total Views] < 5350 THEN "5300 - 5349"
+ELSEIF
+[Total Views] < 5400 THEN "5350 - 5399"
+ELSEIF
+[Total Views] < 5450 THEN "5400 - 5449"
+ELSEIF
+[Total Views] < 5500 THEN "5450 - 5499"
+ELSEIF
+[Total Views] < 5550 THEN "5500 - 5549"
+ELSEIF
+[Total Views] < 5600 THEN "5550 - 5599"
+ELSEIF
+[Total Views] < 5650 THEN "5600 - 5649"
+ELSEIF
+[Total Views] < 5700 THEN "5650 - 5699"
+ELSEIF
+[Total Views] < 5750 THEN "5700 - 5749"
+ELSEIF
+[Total Views] < 5800 THEN "5750 - 5799"
+ELSEIF
+[Total Views] < 5850 THEN "5800 - 5849"
+ELSEIF
+[Total Views] < 5900 THEN "5850 - 5899"
+ELSEIF
+[Total Views] < 5950 THEN "5900 - 5949"
+ELSEIF
+[Total Views] < 6000 THEN "5950 - 5999"
+ELSEIF
+[Total Views] < 6050 THEN "6000 - 6049"
+ELSEIF
+[Total Views] < 6100 THEN "6050 - 6099"
+ELSEIF
+[Total Views] < 6150 THEN "6100 - 6149"
+ELSEIF
+[Total Views] < 6200 THEN "6150 - 6199"
+ELSEIF
+[Total Views] < 6250 THEN "6200 - 6249"
+ELSEIF
+[Total Views] < 6300 THEN "6250 - 6299"
+ELSEIF
+[Total Views] < 6350 THEN "6300 - 6349"
+ELSEIF
+[Total Views] < 6400 THEN "6350 - 6399"
+ELSEIF
+[Total Views] < 6450 THEN "6400 - 6449"
+ELSEIF
+[Total Views] < 6500 THEN "6450 - 6499"
+ELSEIF
+[Total Views] < 6550 THEN "6500 - 6549"
+ELSEIF
+[Total Views] < 6600 THEN "6550 - 6599"
+ELSEIF
+[Total Views] < 6650 THEN "6600 - 6649"
+ELSEIF
+[Total Views] < 6700 THEN "6650 - 6699"
+ELSEIF
+[Total Views] < 6750 THEN "6700 - 6749"
+ELSEIF
+[Total Views] < 6800 THEN "6750 - 6799"
+ELSEIF
+[Total Views] < 6850 THEN "6800 - 6849"
+ELSEIF
+[Total Views] < 6900 THEN "6850 - 6899"
+ELSEIF
+[Total Views] < 6950 THEN "6900 - 6949"
+ELSEIF
+[Total Views] < 7000 THEN "6950 - 6999"
+ELSEIF
+[Total Views] < 7050 THEN "7000 - 7049"
+ELSEIF
+[Total Views] < 7100 THEN "7050 - 7099"
+ELSEIF
+[Total Views] < 7150 THEN "7100 - 7149"
+ELSEIF
+[Total Views] < 7200 THEN "7150 - 7199"
+ELSEIF
+[Total Views] < 7250 THEN "7200 - 7249"
+ELSEIF
+[Total Views] < 7300 THEN "7250 - 7299"
+ELSEIF
+[Total Views] < 7350 THEN "7300 - 7349"
+ELSEIF
+[Total Views] < 7400 THEN "7350 - 7399"
+ELSEIF
+[Total Views] < 7450 THEN "7400 - 7449"
+ELSEIF
+[Total Views] < 7500 THEN "7450 - 7499"
+ELSEIF
+[Total Views] < 7550 THEN "7500 - 7549"
+ELSEIF
+[Total Views] < 7600 THEN "7550 - 7599"
+ELSEIF
+[Total Views] < 7650 THEN "7600 - 7649"
+ELSEIF
+[Total Views] < 7700 THEN "7650 - 7699"
+ELSEIF
+[Total Views] < 7750 THEN "7700 - 7749"
+ELSEIF
+[Total Views] < 7800 THEN "7750 - 7799"
+ELSEIF
+[Total Views] < 7850 THEN "7800 - 7849"
+ELSEIF
+[Total Views] < 7900 THEN "7850 - 7899"
+ELSEIF
+[Total Views] < 7950 THEN "7900 - 7949"
+ELSEIF
+[Total Views] < 8000 THEN "7950 - 7999"
+ELSEIF
+[Total Views] < 8050 THEN "8000 - 8049"
+ELSEIF
+[Total Views] < 8100 THEN "8050 - 8099"
+ELSEIF
+[Total Views] < 8150 THEN "8100 - 8149"
+ELSEIF
+[Total Views] < 8200 THEN "8150 - 8199"
+ELSEIF
+[Total Views] < 8250 THEN "8200 - 8249"
+ELSEIF
+[Total Views] < 8300 THEN "8250 - 8299"
+ELSEIF
+[Total Views] < 8350 THEN "8300 - 8349"
+ELSEIF
+[Total Views] < 8400 THEN "8350 - 8399"
+ELSEIF
+[Total Views] < 8450 THEN "8400 - 8449"
+ELSEIF
+[Total Views] < 8500 THEN "8450 - 8499"
+ELSEIF
+[Total Views] < 8550 THEN "8500 - 8549"
+ELSEIF
+[Total Views] < 8600 THEN "8550 - 8599"
+ELSEIF
+[Total Views] < 8650 THEN "8600 - 8649"
+ELSEIF
+[Total Views] < 8700 THEN "8650 - 8699"
+ELSEIF
+[Total Views] < 8750 THEN "8700 - 8749"
+ELSEIF
+[Total Views] < 8800 THEN "8750 - 8799"
+ELSEIF
+[Total Views] < 8850 THEN "8800 - 8849"
+ELSEIF
+[Total Views] < 8900 THEN "8850 - 8899"
+ELSEIF
+[Total Views] < 8950 THEN "8900 - 8949"
+ELSEIF
+[Total Views] < 9000 THEN "8950 - 8999"
+ELSEIF
+[Total Views] < 9050 THEN "9000 - 9049"
+ELSEIF
+[Total Views] < 9100 THEN "9050 - 9099"
+ELSEIF
+[Total Views] < 9150 THEN "9100 - 9149"
+ELSEIF
+[Total Views] < 9200 THEN "9150 - 9199"
+ELSEIF
+[Total Views] < 9250 THEN "9200 - 9249"
+ELSEIF
+[Total Views] < 9300 THEN "9250 - 9299"
+ELSEIF
+[Total Views] < 9350 THEN "9300 - 9349"
+ELSEIF
+[Total Views] < 9400 THEN "9350 - 9399"
+ELSEIF
+[Total Views] < 9450 THEN "9400 - 9449"
+ELSEIF
+[Total Views] < 9500 THEN "9450 - 9499"
+ELSEIF
+[Total Views] < 9550 THEN "9500 - 9549"
+ELSEIF
+[Total Views] < 9600 THEN "9550 - 9599"
+ELSEIF
+[Total Views] < 9650 THEN "9600 - 9649"
+ELSEIF
+[Total Views] < 9700 THEN "9650 - 9699"
+ELSEIF
+[Total Views] < 9750 THEN "9700 - 9749"
+ELSEIF
+[Total Views] < 9800 THEN "9750 - 9799"
+ELSEIF
+[Total Views] < 9850 THEN "9800 - 9849"
+ELSEIF
+[Total Views] < 9900 THEN "9850 - 9899"
+ELSEIF
+[Total Views] < 9950 THEN "9900 - 9949"
+ELSEIF
+[Total Views] < 10000 THEN "9950 - 9999"
+ELSEIF
+[Total Views] < 10050 THEN "10000 - 10049"
+ELSEIF
+[Total Views] < 10100 THEN "10050 - 10099"
+ELSEIF
+[Total Views] < 10150 THEN "10100 - 10149"
+ELSEIF
+[Total Views] < 10200 THEN "10150 - 10199"
+ELSEIF
+[Total Views] < 10250 THEN "10200 - 10249"
+ELSEIF
+[Total Views] < 10300 THEN "10250 - 10299"
+ELSEIF
+[Total Views] < 10350 THEN "10300 - 10349"
+ELSEIF
+[Total Views] < 10400 THEN "10350 - 10399"
+ELSEIF
+[Total Views] < 10450 THEN "10400 - 10449"
+ELSEIF
+[Total Views] < 10500 THEN "10450 - 10499"
+ELSEIF
+[Total Views] < 10550 THEN "10500 - 10549"
+ELSEIF
+[Total Views] < 10600 THEN "10550 - 10599"
+ELSEIF
+[Total Views] < 10650 THEN "10600 - 10649"
+ELSEIF
+[Total Views] < 10700 THEN "10650 - 10699"
+ELSEIF
+[Total Views] < 10750 THEN "10700 - 10749"
+ELSEIF
+[Total Views] < 10800 THEN "10750 - 10799"
+ELSEIF
+[Total Views] < 10850 THEN "10800 - 10849"
+ELSEIF
+[Total Views] < 10900 THEN "10850 - 10899"
+ELSEIF
+[Total Views] < 10950 THEN "10900 - 10949"
+ELSEIF
+[Total Views] < 11000 THEN "10950 - 10999"
+ELSEIF
+[Total Views] < 11050 THEN "11000 - 11049"
+ELSEIF
+[Total Views] < 11100 THEN "11050 - 11099"
+ELSEIF
+[Total Views] < 11150 THEN "11100 - 11149"
+ELSEIF
+[Total Views] < 11200 THEN "11150 - 11199"
+ELSEIF
+[Total Views] < 11250 THEN "11200 - 11249"
+ELSEIF
+[Total Views] < 11300 THEN "11250 - 11299"
+ELSEIF
+[Total Views] < 11350 THEN "11300 - 11349"
+ELSEIF
+[Total Views] < 11400 THEN "11350 - 11399"
+ELSEIF
+[Total Views] < 11450 THEN "11400 - 11449"
+ELSEIF
+[Total Views] < 11500 THEN "11450 - 11499"
+ELSEIF
+[Total Views] < 11550 THEN "11500 - 11549"
+ELSEIF
+[Total Views] < 11600 THEN "11550 - 11599"
+ELSEIF
+[Total Views] < 11650 THEN "11600 - 11649"
+ELSEIF
+[Total Views] < 11700 THEN "11650 - 11699"
+ELSEIF
+[Total Views] < 11750 THEN "11700 - 11749"
+ELSEIF
+[Total Views] < 11800 THEN "11750 - 11799"
+ELSEIF
+[Total Views] < 11850 THEN "11800 - 11849"
+ELSEIF
+[Total Views] < 11900 THEN "11850 - 11899"
+ELSEIF
+[Total Views] < 11950 THEN "11900 - 11949"
+ELSEIF
+[Total Views] < 12000 THEN "11950 - 11999"
+ELSEIF
+[Total Views] < 12050 THEN "12000 - 12049"
+ELSEIF
+[Total Views] < 12100 THEN "12050 - 12099"
+ELSEIF
+[Total Views] < 12150 THEN "12100 - 12149"
+ELSEIF
+[Total Views] < 12200 THEN "12150 - 12199"
+ELSEIF
+[Total Views] < 12250 THEN "12200 - 12249"
+ELSEIF
+[Total Views] < 12300 THEN "12250 - 12299"
+ELSEIF
+[Total Views] < 12350 THEN "12300 - 12349"
+ELSEIF
+[Total Views] < 12400 THEN "12350 - 12399"
+ELSEIF
+[Total Views] < 12450 THEN "12400 - 12449"
+ELSEIF
+[Total Views] < 12500 THEN "12450 - 12499"
+ELSEIF
+[Total Views] < 12550 THEN "12500 - 12549"
+ELSEIF
+[Total Views] < 12600 THEN "12550 - 12599"
+ELSEIF
+[Total Views] < 12650 THEN "12600 - 12649"
+ELSEIF
+[Total Views] < 12700 THEN "12650 - 12699"
+ELSEIF
+[Total Views] < 12750 THEN "12700 - 12749"
+ELSEIF
+[Total Views] < 12800 THEN "12750 - 12799"
+ELSEIF
+[Total Views] < 12850 THEN "12800 - 12849"
+ELSEIF
+[Total Views] < 12900 THEN "12850 - 12899"
+ELSEIF
+[Total Views] < 12950 THEN "12900 - 12949"
+ELSEIF
+[Total Views] < 13000 THEN "12950 - 12999"
+ELSEIF
+[Total Views] < 13050 THEN "13000 - 13049"
+ELSEIF
+[Total Views] < 13100 THEN "13050 - 13099"
+ELSEIF
+[Total Views] < 13150 THEN "13100 - 13149"
+ELSEIF
+[Total Views] < 13200 THEN "13150 - 13199"
+ELSEIF
+[Total Views] < 13250 THEN "13200 - 13249"
+ELSEIF
+[Total Views] < 13300 THEN "13250 - 13299"
+ELSEIF
+[Total Views] < 13350 THEN "13300 - 13349"
+ELSEIF
+[Total Views] < 13400 THEN "13350 - 13399"
+ELSEIF
+[Total Views] < 13450 THEN "13400 - 13449"
+ELSEIF
+[Total Views] < 13500 THEN "13450 - 13499"
+ELSEIF
+[Total Views] < 13550 THEN "13500 - 13549"
+ELSEIF
+[Total Views] < 13600 THEN "13550 - 13599"
+ELSEIF
+[Total Views] < 13650 THEN "13600 - 13649"
+ELSEIF
+[Total Views] < 13700 THEN "13650 - 13699"
+ELSEIF
+[Total Views] < 13750 THEN "13700 - 13749"
+ELSEIF
+[Total Views] < 13800 THEN "13750 - 13799"
+ELSEIF
+[Total Views] < 13850 THEN "13800 - 13849"
+ELSEIF
+[Total Views] < 13900 THEN "13850 - 13899"
+ELSEIF
+[Total Views] < 13950 THEN "13900 - 13949"
+ELSEIF
+[Total Views] < 14000 THEN "13950 - 13999"
+ELSEIF
+[Total Views] < 14050 THEN "14000 - 14049"
+ELSEIF
+[Total Views] < 14100 THEN "14050 - 14099"
+ELSEIF
+[Total Views] < 14150 THEN "14100 - 14149"
+ELSEIF
+[Total Views] < 14200 THEN "14150 - 14199"
+ELSEIF
+[Total Views] < 14250 THEN "14200 - 14249"
+ELSEIF
+[Total Views] < 14300 THEN "14250 - 14299"
+ELSEIF
+[Total Views] < 14350 THEN "14300 - 14349"
+ELSEIF
+[Total Views] < 14400 THEN "14350 - 14399"
+ELSEIF
+[Total Views] < 14450 THEN "14400 - 14449"
+ELSEIF
+[Total Views] < 14500 THEN "14450 - 14499"
+ELSEIF
+[Total Views] < 14550 THEN "14500 - 14549"
+ELSEIF
+[Total Views] < 14600 THEN "14550 - 14599"
+ELSEIF
+[Total Views] < 14650 THEN "14600 - 14649"
+ELSEIF
+[Total Views] < 14700 THEN "14650 - 14699"
+ELSEIF
+[Total Views] < 14750 THEN "14700 - 14749"
+ELSEIF
+[Total Views] < 14800 THEN "14750 - 14799"
+ELSEIF
+[Total Views] < 14850 THEN "14800 - 14849"
+ELSEIF
+[Total Views] < 14900 THEN "14850 - 14899"
+ELSEIF
+[Total Views] < 14950 THEN "14900 - 14949"
+ELSEIF
+[Total Views] < 15000 THEN "14950 - 14999"
+ELSEIF
+[Total Views] < 15050 THEN "15000 - 15049"
+ELSEIF
+[Total Views] < 15100 THEN "15050 - 15099"
+ELSEIF
+[Total Views] < 15150 THEN "15100 - 15149"
+ELSEIF
+[Total Views] < 15200 THEN "15150 - 15199"
+ELSEIF
+[Total Views] < 15250 THEN "15200 - 15249"
+ELSEIF
+[Total Views] < 15300 THEN "15250 - 15299"
+ELSEIF
+[Total Views] < 15350 THEN "15300 - 15349"
+ELSEIF
+[Total Views] < 15400 THEN "15350 - 15399"
+ELSEIF
+[Total Views] < 15450 THEN "15400 - 15449"
+ELSEIF
+[Total Views] < 15500 THEN "15450 - 15499"
+ELSEIF
+[Total Views] < 15550 THEN "15500 - 15549"
+ELSEIF
+[Total Views] < 15600 THEN "15550 - 15599"
+ELSEIF
+[Total Views] < 15650 THEN "15600 - 15649"
+ELSEIF
+[Total Views] < 15700 THEN "15650 - 15699"
+ELSEIF
+[Total Views] < 15750 THEN "15700 - 15749"
+ELSEIF
+[Total Views] < 15800 THEN "15750 - 15799"
+ELSEIF
+[Total Views] < 15850 THEN "15800 - 15849"
+ELSEIF
+[Total Views] < 15900 THEN "15850 - 15899"
+ELSEIF
+[Total Views] < 15950 THEN "15900 - 15949"
+ELSEIF
+[Total Views] < 16000 THEN "15950 - 15999"
+ELSEIF
+[Total Views] < 16050 THEN "16000 - 16049"
+ELSEIF
+[Total Views] < 16100 THEN "16050 - 16099"
+ELSEIF
+[Total Views] < 16150 THEN "16100 - 16149"
+ELSEIF
+[Total Views] < 16200 THEN "16150 - 16199"
+ELSEIF
+[Total Views] < 16250 THEN "16200 - 16249"
+ELSEIF
+[Total Views] < 16300 THEN "16250 - 16299"
+ELSEIF
+[Total Views] < 16350 THEN "16300 - 16349"
+ELSEIF
+[Total Views] < 16400 THEN "16350 - 16399"
+ELSEIF
+[Total Views] < 16450 THEN "16400 - 16449"
+ELSEIF
+[Total Views] < 16500 THEN "16450 - 16499"
+ELSEIF
+[Total Views] < 16550 THEN "16500 - 16549"
+ELSEIF
+[Total Views] < 16600 THEN "16550 - 16599"
+ELSEIF
+[Total Views] < 16650 THEN "16600 - 16649"
+ELSEIF
+[Total Views] < 16700 THEN "16650 - 16699"
+ELSEIF
+[Total Views] < 16750 THEN "16700 - 16749"
+ELSEIF
+[Total Views] < 16800 THEN "16750 - 16799"
+ELSEIF
+[Total Views] < 16850 THEN "16800 - 16849"
+ELSEIF
+[Total Views] < 16900 THEN "16850 - 16899"
+ELSEIF
+[Total Views] < 16950 THEN "16900 - 16949"
+ELSEIF
+[Total Views] < 17000 THEN "16950 - 16999"
+ELSEIF
+[Total Views] < 17050 THEN "17000 - 17049"
+ELSEIF
+[Total Views] < 17100 THEN "17050 - 17099"
+ELSEIF
+[Total Views] < 17150 THEN "17100 - 17149"
+ELSEIF
+[Total Views] < 17200 THEN "17150 - 17199"
+ELSEIF
+[Total Views] < 17250 THEN "17200 - 17249"
+ELSEIF
+[Total Views] < 17300 THEN "17250 - 17299"
+ELSEIF
+[Total Views] < 17350 THEN "17300 - 17349"
+ELSEIF
+[Total Views] < 17400 THEN "17350 - 17399"
+ELSEIF
+[Total Views] < 17450 THEN "17400 - 17449"
+ELSEIF
+[Total Views] < 17500 THEN "17450 - 17499"
+ELSEIF
+[Total Views] < 17550 THEN "17500 - 17549"
+ELSEIF
+[Total Views] < 17600 THEN "17550 - 17599"
+ELSEIF
+[Total Views] < 17650 THEN "17600 - 17649"
+ELSEIF
+[Total Views] < 17700 THEN "17650 - 17699"
+ELSEIF
+[Total Views] < 17750 THEN "17700 - 17749"
+ELSEIF
+[Total Views] < 17800 THEN "17750 - 17799"
+ELSEIF
+[Total Views] < 17850 THEN "17800 - 17849"
+ELSEIF
+[Total Views] < 17900 THEN "17850 - 17899"
+ELSEIF
+[Total Views] < 17950 THEN "17900 - 17949"
+ELSEIF
+[Total Views] < 18000 THEN "17950 - 17999"
+ELSEIF
+[Total Views] < 18050 THEN "18000 - 18049"
+ELSEIF
+[Total Views] < 18100 THEN "18050 - 18099"
+ELSEIF
+[Total Views] < 18150 THEN "18100 - 18149"
+ELSEIF
+[Total Views] < 18200 THEN "18150 - 18199"
+ELSEIF
+[Total Views] < 18250 THEN "18200 - 18249"
+ELSEIF
+[Total Views] < 18300 THEN "18250 - 18299"
+ELSEIF
+[Total Views] < 18350 THEN "18300 - 18349"
+ELSEIF
+[Total Views] < 18400 THEN "18350 - 18399"
+ELSEIF
+[Total Views] < 18450 THEN "18400 - 18449"
+ELSEIF
+[Total Views] < 18500 THEN "18450 - 18499"
+ELSEIF
+[Total Views] < 18550 THEN "18500 - 18549"
+ELSEIF
+[Total Views] < 18600 THEN "18550 - 18599"
+ELSEIF
+[Total Views] < 18650 THEN "18600 - 18649"
+ELSEIF
+[Total Views] < 18700 THEN "18650 - 18699"
+ELSEIF
+[Total Views] < 18750 THEN "18700 - 18749"
+ELSEIF
+[Total Views] < 18800 THEN "18750 - 18799"
+ELSEIF
+[Total Views] < 18850 THEN "18800 - 18849"
+ELSEIF
+[Total Views] < 18900 THEN "18850 - 18899"
+ELSEIF
+[Total Views] < 18950 THEN "18900 - 18949"
+ELSEIF
+[Total Views] < 19000 THEN "18950 - 18999"
+ELSEIF
+[Total Views] < 19050 THEN "19000 - 19049"
+ELSEIF
+[Total Views] < 19100 THEN "19050 - 19099"
+ELSEIF
+[Total Views] < 19150 THEN "19100 - 19149"
+ELSEIF
+[Total Views] < 19200 THEN "19150 - 19199"
+ELSEIF
+[Total Views] < 19250 THEN "19200 - 19249"
+ELSEIF
+[Total Views] < 19300 THEN "19250 - 19299"
+ELSEIF
+[Total Views] < 19350 THEN "19300 - 19349"
+ELSEIF
+[Total Views] < 19400 THEN "19350 - 19399"
+ELSEIF
+[Total Views] < 19450 THEN "19400 - 19449"
+ELSEIF
+[Total Views] < 19500 THEN "19450 - 19499"
+ELSEIF
+[Total Views] < 19550 THEN "19500 - 19549"
+ELSEIF
+[Total Views] < 19600 THEN "19550 - 19599"
+ELSEIF
+[Total Views] < 19650 THEN "19600 - 19649"
+ELSEIF
+[Total Views] < 19700 THEN "19650 - 19699"
+ELSEIF
+[Total Views] < 19750 THEN "19700 - 19749"
+ELSEIF
+[Total Views] < 19800 THEN "19750 - 19799"
+ELSEIF
+[Total Views] < 19850 THEN "19800 - 19849"
+ELSEIF
+[Total Views] < 19900 THEN "19850 - 19899"
+ELSEIF
+[Total Views] < 19950 THEN "19900 - 19949"
+ELSEIF
+[Total Views] < 20000 THEN "19950 - 19999"
+ELSEIF
+[Total Views] < 20050 THEN "20000 - 20049"
+ELSEIF
+[Total Views] < 20100 THEN "20050 - 20099"
+ELSEIF
+[Total Views] < 20150 THEN "20100 - 20149"
+ELSEIF
+[Total Views] < 20200 THEN "20150 - 20199"
+ELSEIF
+[Total Views] < 20250 THEN "20200 - 20249"
+ELSEIF
+[Total Views] < 20300 THEN "20250 - 20299"
+ELSEIF
+[Total Views] < 20350 THEN "20300 - 20349"
+ELSEIF
+[Total Views] < 20400 THEN "20350 - 20399"
+ELSEIF
+[Total Views] < 20450 THEN "20400 - 20449"
+ELSEIF
+[Total Views] < 20500 THEN "20450 - 20499"
+ELSEIF
+[Total Views] < 20550 THEN "20500 - 20549"
+ELSEIF
+[Total Views] < 20600 THEN "20550 - 20599"
+ELSEIF
+[Total Views] < 20650 THEN "20600 - 20649"
+ELSEIF
+[Total Views] < 20700 THEN "20650 - 20699"
+ELSEIF
+[Total Views] < 20750 THEN "20700 - 20749"
+ELSEIF
+[Total Views] < 20800 THEN "20750 - 20799"
+ELSEIF
+[Total Views] < 20850 THEN "20800 - 20849"
+ELSEIF
+[Total Views] < 20900 THEN "20850 - 20899"
+ELSEIF
+[Total Views] < 20950 THEN "20900 - 20949"
+ELSEIF
+[Total Views] < 21000 THEN "20950 - 20999"
+ELSEIF
+[Total Views] < 21050 THEN "21000 - 21049"
+ELSEIF
+[Total Views] < 21100 THEN "21050 - 21099"
+ELSEIF
+[Total Views] < 21150 THEN "21100 - 21149"
+ELSEIF
+[Total Views] < 21200 THEN "21150 - 21199"
+ELSEIF
+[Total Views] < 21250 THEN "21200 - 21249"
+ELSEIF
+[Total Views] < 21300 THEN "21250 - 21299"
+ELSEIF
+[Total Views] < 21350 THEN "21300 - 21349"
+ELSEIF
+[Total Views] < 21400 THEN "21350 - 21399"
+ELSEIF
+[Total Views] < 21450 THEN "21400 - 21449"
+ELSEIF
+[Total Views] < 21500 THEN "21450 - 21499"
+ELSEIF
+[Total Views] < 21550 THEN "21500 - 21549"
+ELSEIF
+[Total Views] < 21600 THEN "21550 - 21599"
+ELSEIF
+[Total Views] < 21650 THEN "21600 - 21649"
+ELSEIF
+[Total Views] < 21700 THEN "21650 - 21699"
+ELSEIF
+[Total Views] < 21750 THEN "21700 - 21749"
+ELSEIF
+[Total Views] < 21800 THEN "21750 - 21799"
+ELSEIF
+[Total Views] < 21850 THEN "21800 - 21849"
+ELSEIF
+[Total Views] < 21900 THEN "21850 - 21899"
+ELSEIF
+[Total Views] < 21950 THEN "21900 - 21949"
+ELSEIF
+[Total Views] < 22000 THEN "21950 - 21999"
+ELSEIF
+[Total Views] < 22050 THEN "22000 - 22049"
+ELSEIF
+[Total Views] < 22100 THEN "22050 - 22099"
+ELSEIF
+[Total Views] < 22150 THEN "22100 - 22149"
+ELSEIF
+[Total Views] < 22200 THEN "22150 - 22199"
+ELSEIF
+[Total Views] < 22250 THEN "22200 - 22249"
+ELSEIF
+[Total Views] < 22300 THEN "22250 - 22299"
+ELSEIF
+[Total Views] < 22350 THEN "22300 - 22349"
+ELSEIF
+[Total Views] < 22400 THEN "22350 - 22399"
+ELSEIF
+[Total Views] < 22450 THEN "22400 - 22449"
+ELSEIF
+[Total Views] < 22500 THEN "22450 - 22499"
+ELSEIF
+[Total Views] < 22550 THEN "22500 - 22549"
+ELSEIF
+[Total Views] < 22600 THEN "22550 - 22599"
+ELSEIF
+[Total Views] < 22650 THEN "22600 - 22649"
+ELSEIF
+[Total Views] < 22700 THEN "22650 - 22699"
+ELSEIF
+[Total Views] < 22750 THEN "22700 - 22749"
+ELSEIF
+[Total Views] < 22800 THEN "22750 - 22799"
+ELSEIF
+[Total Views] < 22850 THEN "22800 - 22849"
+ELSEIF
+[Total Views] < 22900 THEN "22850 - 22899"
+ELSEIF
+[Total Views] < 22950 THEN "22900 - 22949"
+ELSEIF
+[Total Views] < 23000 THEN "22950 - 22999"
+ELSEIF
+[Total Views] < 23050 THEN "23000 - 23049"
+ELSEIF
+[Total Views] < 23100 THEN "23050 - 23099"
+ELSEIF
+[Total Views] < 23150 THEN "23100 - 23149"
+ELSEIF
+[Total Views] < 23200 THEN "23150 - 23199"
+ELSEIF
+[Total Views] < 23250 THEN "23200 - 23249"
+ELSEIF
+[Total Views] < 23300 THEN "23250 - 23299"
+ELSEIF
+[Total Views] < 23350 THEN "23300 - 23349"
+ELSEIF
+[Total Views] < 23400 THEN "23350 - 23399"
+ELSEIF
+[Total Views] < 23450 THEN "23400 - 23449"
+ELSEIF
+[Total Views] < 23500 THEN "23450 - 23499"
+ELSEIF
+[Total Views] < 23550 THEN "23500 - 23549"
+ELSEIF
+[Total Views] < 23600 THEN "23550 - 23599"
+ELSEIF
+[Total Views] < 23650 THEN "23600 - 23649"
+ELSEIF
+[Total Views] < 23700 THEN "23650 - 23699"
+ELSEIF
+[Total Views] < 23750 THEN "23700 - 23749"
+ELSEIF
+[Total Views] < 23800 THEN "23750 - 23799"
+ELSEIF
+[Total Views] < 23850 THEN "23800 - 23849"
+ELSEIF
+[Total Views] < 23900 THEN "23850 - 23899"
+ELSEIF
+[Total Views] < 23950 THEN "23900 - 23949"
+ELSEIF
+[Total Views] < 24000 THEN "23950 - 23999"
+ELSEIF
+[Total Views] < 24050 THEN "24000 - 24049"
+ELSEIF
+[Total Views] < 24100 THEN "24050 - 24099"
+ELSEIF
+[Total Views] < 24150 THEN "24100 - 24149"
+ELSEIF
+[Total Views] < 24200 THEN "24150 - 24199"
+ELSEIF
+[Total Views] < 24250 THEN "24200 - 24249"
+ELSEIF
+[Total Views] < 24300 THEN "24250 - 24299"
+ELSEIF
+[Total Views] < 24350 THEN "24300 - 24349"
+ELSEIF
+[Total Views] < 24400 THEN "24350 - 24399"
+ELSEIF
+[Total Views] < 24450 THEN "24400 - 24449"
+ELSEIF
+[Total Views] < 24500 THEN "24450 - 24499"
+ELSEIF
+[Total Views] < 24550 THEN "24500 - 24549"
+ELSEIF
+[Total Views] < 24600 THEN "24550 - 24599"
+ELSEIF
+[Total Views] < 24650 THEN "24600 - 24649"
+ELSEIF
+[Total Views] < 24700 THEN "24650 - 24699"
+ELSEIF
+[Total Views] < 24750 THEN "24700 - 24749"
+ELSEIF
+[Total Views] < 24800 THEN "24750 - 24799"
+ELSEIF
+[Total Views] < 24850 THEN "24800 - 24849"
+ELSEIF
+[Total Views] < 24900 THEN "24850 - 24899"
+ELSEIF
+[Total Views] < 24950 THEN "24900 - 24949"
+ELSEIF
+[Total Views] < 25000 THEN "24950 - 24999"
+ELSEIF
+[Total Views] < 25050 THEN "25000 - 25049"
+ELSEIF
+[Total Views] < 25100 THEN "25050 - 25099"
+ELSEIF
+[Total Views] < 25150 THEN "25100 - 25149"
+ELSEIF
+[Total Views] < 25200 THEN "25150 - 25199"
+ELSEIF
+[Total Views] < 25250 THEN "25200 - 25249"
+ELSEIF
+[Total Views] < 25300 THEN "25250 - 25299"
+ELSEIF
+[Total Views] < 25350 THEN "25300 - 25349"
+ELSEIF
+[Total Views] < 25400 THEN "25350 - 25399"
+ELSEIF
+[Total Views] < 25450 THEN "25400 - 25449"
+ELSEIF
+[Total Views] < 25500 THEN "25450 - 25499"
+ELSEIF
+[Total Views] < 25550 THEN "25500 - 25549"
+ELSEIF
+[Total Views] < 25600 THEN "25550 - 25599"
+ELSEIF
+[Total Views] < 25650 THEN "25600 - 25649"
+ELSEIF
+[Total Views] < 25700 THEN "25650 - 25699"
+ELSEIF
+[Total Views] < 25750 THEN "25700 - 25749"
+ELSEIF
+[Total Views] < 25800 THEN "25750 - 25799"
+ELSEIF
+[Total Views] < 25850 THEN "25800 - 25849"
+ELSEIF
+[Total Views] < 25900 THEN "25850 - 25899"
+ELSEIF
+[Total Views] < 25950 THEN "25900 - 25949"
+ELSEIF
+[Total Views] < 26000 THEN "25950 - 25999"
+ELSEIF
+[Total Views] < 26050 THEN "26000 - 26049"
+ELSEIF
+[Total Views] < 26100 THEN "26050 - 26099"
+ELSEIF
+[Total Views] < 26150 THEN "26100 - 26149"
+ELSEIF
+[Total Views] < 26200 THEN "26150 - 26199"
+ELSEIF
+[Total Views] < 26250 THEN "26200 - 26249"
+ELSEIF
+[Total Views] < 26300 THEN "26250 - 26299"
+ELSEIF
+[Total Views] < 26350 THEN "26300 - 26349"
+ELSEIF
+[Total Views] < 26400 THEN "26350 - 26399"
+ELSEIF
+[Total Views] < 26450 THEN "26400 - 26449"
+ELSEIF
+[Total Views] < 26500 THEN "26450 - 26499"
+ELSEIF
+[Total Views] < 26550 THEN "26500 - 26549"
+ELSEIF
+[Total Views] < 26600 THEN "26550 - 26599"
+ELSEIF
+[Total Views] < 26650 THEN "26600 - 26649"
+ELSEIF
+[Total Views] < 26700 THEN "26650 - 26699"
+ELSEIF
+[Total Views] < 26750 THEN "26700 - 26749"
+ELSEIF
+[Total Views] < 26800 THEN "26750 - 26799"
+ELSEIF
+[Total Views] < 26850 THEN "26800 - 26849"
+ELSEIF
+[Total Views] < 26900 THEN "26850 - 26899"
+ELSEIF
+[Total Views] < 26950 THEN "26900 - 26949"
+ELSEIF
+[Total Views] < 27000 THEN "26950 - 26999"
+ELSEIF
+[Total Views] < 27050 THEN "27000 - 27049"
+ELSEIF
+[Total Views] < 27100 THEN "27050 - 27099"
+ELSEIF
+[Total Views] < 27150 THEN "27100 - 27149"
+ELSEIF
+[Total Views] < 27200 THEN "27150 - 27199"
+ELSEIF
+[Total Views] < 27250 THEN "27200 - 27249"
+ELSEIF
+[Total Views] < 27300 THEN "27250 - 27299"
+ELSEIF
+[Total Views] < 27350 THEN "27300 - 27349"
+ELSEIF
+[Total Views] < 27400 THEN "27350 - 27399"
+ELSEIF
+[Total Views] < 27450 THEN "27400 - 27449"
+ELSEIF
+[Total Views] < 27500 THEN "27450 - 27499"
+ELSEIF
+[Total Views] < 27550 THEN "27500 - 27549"
+ELSEIF
+[Total Views] < 27600 THEN "27550 - 27599"
+ELSEIF
+[Total Views] < 27650 THEN "27600 - 27649"
+ELSEIF
+[Total Views] < 27700 THEN "27650 - 27699"
+ELSEIF
+[Total Views] < 27750 THEN "27700 - 27749"
+ELSEIF
+[Total Views] < 27800 THEN "27750 - 27799"
+ELSEIF
+[Total Views] < 27850 THEN "27800 - 27849"
+ELSEIF
+[Total Views] < 27900 THEN "27850 - 27899"
+ELSEIF
+[Total Views] < 27950 THEN "27900 - 27949"
+ELSEIF
+[Total Views] < 28000 THEN "27950 - 27999"
+ELSEIF
+[Total Views] < 28050 THEN "28000 - 28049"
+ELSEIF
+[Total Views] < 28100 THEN "28050 - 28099"
+ELSEIF
+[Total Views] < 28150 THEN "28100 - 28149"
+ELSEIF
+[Total Views] < 28200 THEN "28150 - 28199"
+ELSEIF
+[Total Views] < 28250 THEN "28200 - 28249"
+ELSEIF
+[Total Views] < 28300 THEN "28250 - 28299"
+ELSEIF
+[Total Views] < 28350 THEN "28300 - 28349"
+ELSEIF
+[Total Views] < 28400 THEN "28350 - 28399"
+ELSEIF
+[Total Views] < 28450 THEN "28400 - 28449"
+ELSEIF
+[Total Views] < 28500 THEN "28450 - 28499"
+ELSEIF
+[Total Views] < 28550 THEN "28500 - 28549"
+ELSEIF
+[Total Views] < 28600 THEN "28550 - 28599"
+ELSEIF
+[Total Views] < 28650 THEN "28600 - 28649"
+ELSEIF
+[Total Views] < 28700 THEN "28650 - 28699"
+ELSEIF
+[Total Views] < 28750 THEN "28700 - 28749"
+ELSEIF
+[Total Views] < 28800 THEN "28750 - 28799"
+ELSEIF
+[Total Views] < 28850 THEN "28800 - 28849"
+ELSEIF
+[Total Views] < 28900 THEN "28850 - 28899"
+ELSEIF
+[Total Views] < 28950 THEN "28900 - 28949"
+ELSEIF
+[Total Views] < 29000 THEN "28950 - 28999"
+ELSEIF
+[Total Views] < 29050 THEN "29000 - 29049"
+ELSEIF
+[Total Views] < 29100 THEN "29050 - 29099"
+ELSEIF
+[Total Views] < 29150 THEN "29100 - 29149"
+ELSEIF
+[Total Views] < 29200 THEN "29150 - 29199"
+ELSEIF
+[Total Views] < 29250 THEN "29200 - 29249"
+ELSEIF
+[Total Views] < 29300 THEN "29250 - 29299"
+ELSEIF
+[Total Views] < 29350 THEN "29300 - 29349"
+ELSEIF
+[Total Views] < 29400 THEN "29350 - 29399"
+ELSEIF
+[Total Views] < 29450 THEN "29400 - 29449"
+ELSEIF
+[Total Views] < 29500 THEN "29450 - 29499"
+ELSEIF
+[Total Views] < 29550 THEN "29500 - 29549"
+ELSEIF
+[Total Views] < 29600 THEN "29550 - 29599"
+ELSEIF
+[Total Views] < 29650 THEN "29600 - 29649"
+ELSEIF
+[Total Views] < 29700 THEN "29650 - 29699"
+ELSEIF
+[Total Views] < 29750 THEN "29700 - 29749"
+ELSEIF
+[Total Views] < 29800 THEN "29750 - 29799"
+ELSEIF
+[Total Views] < 29850 THEN "29800 - 29849"
+ELSEIF
+[Total Views] < 29900 THEN "29850 - 29899"
+ELSEIF
+[Total Views] < 29950 THEN "29900 - 29949"
+ELSEIF
+[Total Views] < 30000 THEN "29950 - 29999"
+ELSE "30000 or more"
+END
+
+PPV PROMEDIO
+
+[points_given]/[Total Views]
