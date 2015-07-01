@@ -204,7 +204,6 @@ users <- dbGetQuery(con,
 		HOUR(CONVERT_TZ(u.created_at,'+00:00','-03:00')) AS 'Hora afiliacion',
 		WEEKDAY(CONVERT_TZ(u.created_at,'+00:00','-03:00')) AS 'Dia afiliacion',
 		(puntos_historicos - puntos) as puntos_gastados,
-		u.hascode,
 		(SELECT
 			count(1)
 		FROM
