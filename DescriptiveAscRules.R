@@ -126,87 +126,152 @@ generalRangesWithZero <- function(variable, range, unit){
     paste("Entre",((rango*range)),"y",((rango*range)+(range-1)),unit)
   }
 }
-# Libreria para reglas de asociación
+
+# Librerias
 library(arules)
+library(klaR)
+library(cluster)
+
+# Data
 
 users <- read.csv("Data/users.csv", header = TRUE, sep=";")
+videos <- read.csv("Data/videos.csv", header = TRUE, sep=";")
 
-users$hora_afiliacion <- as.factor(users$hora_afiliacion)
-users$dia_afiliacion <- sapply(users$dia_afiliacion, getDayName)
+#
+#   APRIORI + ECLAT
+#
 
-users$edad <- sapply(users$nacimiento, getEdad)
+# USERS
 
-users$tickets_canjeados <- sapply(users$tickets_canjeados, cleanTicketsCanjeados)
+users_apriori <- users
+users_apriori$hora_afiliacion <- as.factor(users_apriori$hora_afiliacion)
+users_apriori$dia_afiliacion <- sapply(users_apriori$dia_afiliacion, getDayName)
 
-users$tickets_canjeados_rango <- mapply(generalRanges, users$tickets_canjeados, 5, "tickets")
-users$tickets_canjeados_rango <- as.factor(users$tickets_canjeados_rango)
+users_apriori$edad <- sapply(users_apriori$nacimiento, getEdad)
 
-users$puntos_historicos_rango <- mapply(generalRanges, users$puntos_historicos, 500, "puntos")
-users$puntos_historicos_rango <- as.factor(users$puntos_historicos_rango)
+users_apriori$tickets_canjeados <- sapply(users_apriori$tickets_canjeados, cleanTicketsCanjeados)
 
-users$puntos_gastados_rango <- mapply(generalRanges, users$puntos_gastados, 500, "puntos")
-users$puntos_gastados_rango <- as.factor(users$puntos_gastados_rango)
+users_apriori$tickets_canjeados_rango <- mapply(generalRanges, users_apriori$tickets_canjeados, 5, "tickets")
+users_apriori$tickets_canjeados_rango <- as.factor(users_apriori$tickets_canjeados_rango)
 
-users$shares_totales_rango <- mapply(generalRanges, users$shares_totales, 5, "shares")
-users$shares_totales_rango <- as.factor(users$shares_totales_rango)
+users_apriori$puntos_historicos_rango <- mapply(generalRanges, users_apriori$puntos_historicos, 500, "puntos")
+users_apriori$puntos_historicos_rango <- as.factor(users_apriori$puntos_historicos_rango)
 
-users$concursos_participados_rango <- mapply(generalRanges, users$concursos_participados, 5, "concursos")
-users$concursos_participados_rango <- as.factor(users$concursos_participados_rango)
+users_apriori$puntos_gastados_rango <- mapply(generalRanges, users_apriori$puntos_gastados, 500, "puntos")
+users_apriori$puntos_gastados_rango <- as.factor(users_apriori$puntos_gastados_rango)
 
-users$shares_frequency <- mapply(setUserShareFrequency,users$difference_last_and_first_share,users$shares_totales)
-users$quality <- mapply(getUserQuality,users$difference_last_and_first_share,users$shares_frequency)
+users_apriori$shares_totales_rango <- mapply(generalRanges, users_apriori$shares_totales, 5, "shares")
+users_apriori$shares_totales_rango <- as.factor(users_apriori$shares_totales_rango)
 
-str(users)
+users_apriori$concursos_participados_rango <- mapply(generalRanges, users_apriori$concursos_participados, 5, "concursos")
+users_apriori$concursos_participados_rango <- as.factor(users_apriori$concursos_participados_rango)
+
+users_apriori$shares_frequency <- mapply(setUserShareFrequency,users_apriori$difference_last_and_first_share,users_apriori$shares_totales)
+users_apriori$quality <- mapply(getUserQuality,users_apriori$difference_last_and_first_share,users_apriori$shares_frequency)
 
 keep <- c("uni", "genero", "hora_afiliacion", "dia_afiliacion", "categoria_dominante","edad", "quality", "tickets_canjeados_rango", "puntos_historicos_rango", "puntos_gastados_rango", "shares_totales_rango", "concursos_participados_rango")
-users_factors <- users[keep]
-rules <- apriori(users_factors)
-inspect(rules)
+users_apriori <- users_apriori[keep]
 
-videos <- read.csv("Data/videos.csv", header = TRUE, sep=";")
+rules_users_apriori <- apriori(users_apriori)
+inspect(rules_users_apriori)
+
+rules_users_eclat <- eclat(users_apriori, list(support=0.2))
+inspect(rules_users_eclat)
+
+#VIDEOS
+
 keep <- c("category","points_per_view","points_given","release_difference","duracion", "total_views","shares_first_day","shares_first_week","shares_first_month","total_shares","total_users_at_release","X1_week_active_users_at_release","X1_week_new_users_at_release","active_raffles_at_release")
-videos_factors <- videos[keep]
+videos_apriori <- videos[keep]
 
-videos_factors$duracion_rangos <- mapply(generalRanges, videos_factors$duracion, 30, "segundos")
-videos_factors$duracion_rangos <- as.factor(videos_factors$duracion_rangos)
+videos_apriori$duracion_rangos <- mapply(generalRanges, videos_apriori$duracion, 30, "segundos")
+videos_apriori$duracion_rangos <- as.factor(videos_apriori$duracion_rangos)
 
-videos_factors$active_raffles_at_release_rangos <- mapply(generalRanges, videos_factors$active_raffles_at_release, 3, "concursos")
-videos_factors$active_raffles_at_release_rangos <- as.factor(videos_factors$active_raffles_at_release_rangos)
+videos_apriori$active_raffles_at_release_rangos <- mapply(generalRanges, videos_apriori$active_raffles_at_release, 3, "concursos")
+videos_apriori$active_raffles_at_release_rangos <- as.factor(videos_apriori$active_raffles_at_release_rangos)
 
-videos_factors$new_users_rangos <- mapply(generalRanges, videos_factors$X1_week_new_users_at_release , 15, "usuarios")
-videos_factors$new_users_rangos <- as.factor(videos_factors$new_users_rangos)
+videos_apriori$new_users_rangos <- mapply(generalRanges, videos_apriori$X1_week_new_users_at_release , 15, "usuarios")
+videos_apriori$new_users_rangos <- as.factor(videos_apriori$new_users_rangos)
 
-videos_factors$active_users_rangos <- mapply(generalRanges, videos_factors$X1_week_active_users_at_release , 15, "usuarios")
-videos_factors$active_users_rangos <- as.factor(videos_factors$active_users_rangos)
+videos_apriori$active_users_rangos <- mapply(generalRanges, videos_apriori$X1_week_active_users_at_release , 15, "usuarios")
+videos_apriori$active_users_rangos <- as.factor(videos_apriori$active_users_rangos)
 
-videos_factors$total_users_rangos <- mapply(generalRanges, videos_factors$total_users_at_release , 200, "usuarios")
-videos_factors$total_users_rangos <- as.factor(videos_factors$total_users_rangos)
+videos_apriori$total_users_rangos <- mapply(generalRanges, videos_apriori$total_users_at_release , 200, "usuarios")
+videos_apriori$total_users_rangos <- as.factor(videos_apriori$total_users_rangos)
 
-videos_factors$total_shares_rangos <- mapply(generalRanges, videos_factors$total_shares , 10, "shares")
-videos_factors$total_shares_rangos <- as.factor(videos_factors$total_shares_rangos)
+videos_apriori$total_shares_rangos <- mapply(generalRanges, videos_apriori$total_shares , 10, "shares")
+videos_apriori$total_shares_rangos <- as.factor(videos_apriori$total_shares_rangos)
 
-videos_factors$shares_first_month_rango <- mapply(generalRanges, videos_factors$shares_first_month, 5, "shares")
-videos_factors$shares_first_month_rango <- as.factor(videos_factors$shares_first_month_rango)
+videos_apriori$shares_first_month_rango <- mapply(generalRanges, videos_apriori$shares_first_month, 5, "shares")
+videos_apriori$shares_first_month_rango <- as.factor(videos_apriori$shares_first_month_rango)
 
-videos_factors$shares_first_week_rango <- mapply(generalRanges, videos_factors$shares_first_week, 5, "shares")
-videos_factors$shares_first_week_rango <- as.factor(videos_factors$shares_first_week_rango)
+videos_apriori$shares_first_week_rango <- mapply(generalRanges, videos_apriori$shares_first_week, 5, "shares")
+videos_apriori$shares_first_week_rango <- as.factor(videos_apriori$shares_first_week_rango)
 
-videos_factors$shares_first_day_rango <- mapply(generalRanges, videos_factors$shares_first_day, 5, "shares")
-videos_factors$shares_first_day_rango <- as.factor(videos_factors$shares_first_day_rango)
+videos_apriori$shares_first_day_rango <- mapply(generalRanges, videos_apriori$shares_first_day, 5, "shares")
+videos_apriori$shares_first_day_rango <- as.factor(videos_apriori$shares_first_day_rango)
 
-videos_factors$total_views_rango <- mapply(generalRanges, videos_factors$total_views , 500, "vistas")
-videos_factors$total_views_rango <- as.factor(videos_factors$total_views_rango)
+videos_apriori$total_views_rango <- mapply(generalRanges, videos_apriori$total_views , 50, "vistas")
+videos_apriori$total_views_rango <- as.factor(videos_apriori$total_views_rango)
 
-videos_factors$release_difference <- sapply(videos_factors$release_difference, function(x){if(is.na(x) || x == 0){ return(NA)} else {return(round((x/60/60/24),0))}})
-videos_factors$release_difference_rango <- mapply(generalRangesWithZero, videos_factors$release_difference , 3, "dias")
-videos_factors$release_difference_rango <- as.factor(videos_factors$release_difference_rango)
+videos_apriori$release_difference <- sapply(videos_apriori$release_difference, function(x){if(is.na(x) || x == 0){ return(NA)} else {return(round((x/60/60/24),0))}})
+videos_apriori$release_difference_rango <- mapply(generalRangesWithZero, videos_apriori$release_difference , 3, "dias")
+videos_apriori$release_difference_rango <- as.factor(videos_apriori$release_difference_rango)
 
-videos_factors$avg_ppv <- mapply(function(views, points){if(points == 0 || views == 0){ return(NA) } else { return(points/views) }}, videos_factors$total_views, videos_factors$points_given)
-videos_factors$avg_ppv_rangos <- mapply(generalRanges, videos_factors$avg_ppv , 10, "puntos")
-videos_factors$avg_ppv_rangos <- as.factor(videos_factors$avg_ppv_rangos)
+videos_apriori$avg_ppv <- mapply(function(views, points){if(points == 0 || views == 0){ return(NA) } else { return(points/views) }}, videos_apriori$total_views, videos_apriori$points_given)
+videos_apriori$avg_ppv_rangos <- mapply(generalRanges, videos_apriori$avg_ppv , 10, "puntos")
+videos_apriori$avg_ppv_rangos <- as.factor(videos_apriori$avg_ppv_rangos)
 
-keep = c("category", "active_raffles_at_release_rangos", "new_users_rangos", "active_users_rangos", "total_shares_rangos", "shares_first_day_rango","total_views_rango","release_difference_rango","avg_ppv_rangos")
-videos_factors <- videos_factors[keep]
+keep <- c("active_users_rangos", "total_shares_rangos","total_views_rango","release_difference_rango","avg_ppv_rangos")
+videos_apriori <- videos_apriori[keep]
 
-rules_videos <- apriori(videos_factors)
-inspect(rules_videos)
+rules_videos_apriori <- apriori(videos_apriori)
+inspect(rules_videos_apriori)
+
+rules_videos_eclat <- eclat(videos_apriori, list(support=0.4))
+inspect(rules_videos_eclat)
+
+#
+#   K-MEANS + K-MODES
+#
+
+# USERS
+
+keep <-c("puntos_historicos", "puntos", "puntos_gastados", "shares_totales", "shares_totales", "concursos_participados","tickets_canjeados","difference_last_and_first_share")
+users_kmeans <- users[keep]
+rownames(users_kmeans) <- NULL
+users_kmeans$tickets_canjeados <- sapply(users_kmeans$tickets_canjeados, function(x){if(is.na(x)){ return(0)} else {return(x)} })
+users_kmeans <- users_kmeans[users_kmeans$difference_last_and_first_share != -1,]
+
+observations <- nrow(users_kmeans)
+thumbs_clusters <- as.integer(sqrt(observations/2))
+
+users_kmeans_result <- kmeans(users_kmeans, thumbs_clusters)
+users_kmodes_result <- kmodes(users_kmeans, thumbs_clusters)
+
+# VIDEOS
+
+keep <- c("points_per_view","duracion","total_views","total_shares","total_users_at_release","X1_week_active_users_at_release")
+videos_kmeans <- videos[keep]
+#videos_kmeans <- videos_kmeans[videos_kmeans$release_difference != -1, ] #SACAR RELEASE DIFFERENCE -1 (NA)
+videos_kmeans <- videos_kmeans[complete.cases(videos_kmeans), ] # SACAR ROWS CONMISSING VALUES
+names(videos_kmeans)[names(videos_kmeans)=="X1_week_active_users_at_release"] <- "active_users"
+names(videos_kmeans)[names(videos_kmeans)=="total_users_at_release"] <- "total_users"
+
+observations <- nrow(videos_kmeans)
+thumbs_clusters <- as.integer(sqrt(observations/2))
+
+videos_kmeans_result <- kmeans(videos_kmeans, thumbs_clusters)
+videos_kmodes_result <- kmodes(videos_kmeans, thumbs_clusters)
+
+#
+#   AGGLOMERATIVE NESTING
+#
+
+# USERS
+
+users_agnes_result <- agnes(users, FALSE)
+
+# VIDEOS
+
+users_agnes_result <- agnes(videos, FALSE)
+
