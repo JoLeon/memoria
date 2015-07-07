@@ -134,6 +134,7 @@ library(cluster)
 library(graphics)
 library(fpc)
 library(optpart)
+library(outliers)
 
 # Data
 
@@ -175,7 +176,7 @@ users_apriori$quality <- mapply(getUserQuality,users_apriori$difference_last_and
 keep <- c("uni", "genero", "hora_afiliacion", "dia_afiliacion", "categoria_dominante","edad", "quality", "tickets_canjeados_rango", "puntos_historicos_rango", "puntos_gastados_rango", "shares_totales_rango", "concursos_participados_rango")
 users_apriori <- users_apriori[keep]
 
-rules_users_apriori <- apriori(users_apriori)
+rules_users_apriori <- apriori(users_apriori, list(support=0.1))
 inspect(rules_users_apriori)
 
 rules_users_eclat <- eclat(users_apriori, list(support=0.2))
@@ -227,7 +228,7 @@ videos_apriori$avg_ppv_rangos <- as.factor(videos_apriori$avg_ppv_rangos)
 keep <- c("active_users_rangos", "total_shares_rangos","total_views_rango","release_difference_rango","avg_ppv_rangos")
 videos_apriori <- videos_apriori[keep]
 
-rules_videos_apriori <- apriori(videos_apriori)
+rules_videos_apriori <- apriori(videos_apriori, list(support=0.2))
 inspect(rules_videos_apriori)
 
 rules_videos_eclat <- eclat(videos_apriori, list(support=0.4))
@@ -260,10 +261,37 @@ videos_kmeans <- videos_kmeans[complete.cases(videos_kmeans), ] # SACAR ROWS CON
 names(videos_kmeans)[names(videos_kmeans)=="X1_week_active_users_at_release"] <- "active_users"
 names(videos_kmeans)[names(videos_kmeans)=="total_users_at_release"] <- "total_users"
 
-observations <- nrow(videos_kmeans)
-thumbs_clusters <- as.integer(sqrt(observations/2))
+#   SE BUSCA MAXIMIZAR DISTANCIA ENTRE CENTROS (BETWEENESS) Y MINIMIZAR DISTANCIA ENTRE CENTROS Y SUS DATOS (WITHINESS)
+#   MAX(BETWEENSS) y MIN(WITHINSS)
+testingOptimalK <- function(data){
+    optimistic <- as.integer(sqrt(nrow(data)/2))
+    kmin <- optimistic-10
+    kmax <- optimistic+10
+    if(kmin <= 0){
+      kmin <- 2
+    }
+    result <- data.frame(list(K = 1, betweens_to_max = 2, withins_to_min = 3))
+    print(paste("Iterando entre",kmin,"y",kmax,"..."))
+    current_row <- 0
+    for(k in kmin:kmax){
+      print(paste("k:",k))
+      current_row <- current_row + 1
+      kbet <- c()
+      kwit <- c()
+      for(i in 1:100){
+        kmeans_result <- kmeans(data,k)
+        kbet <- append(kbet,kmeans_result$betweenss)
+        kwit <- append(kwit,kmeans_result$tot.withinss)
+      }
+      result[current_row,] <- c(k, mean(kbet), mean(kwit))
+    }
+    return(result)
+}
 
-videos_kmeans_result <- kmeans(videos_kmeans, thumbs_clusters)
+optimos_kmeans_videos <- testingOptimalK(videos_kmeans)
+
+videos_kmeans_result <- kmeans(videos_kmeans, 100)
+
 videos_kmodes_result <- kmodes(videos_kmeans, thumbs_clusters)
 
 #
