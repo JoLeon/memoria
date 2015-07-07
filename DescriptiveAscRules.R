@@ -131,6 +131,9 @@ generalRangesWithZero <- function(variable, range, unit){
 library(arules)
 library(klaR)
 library(cluster)
+library(graphics)
+library(fpc)
+library(optpart)
 
 # Data
 
@@ -236,7 +239,7 @@ inspect(rules_videos_eclat)
 
 # USERS
 
-keep <-c("puntos_historicos", "puntos", "puntos_gastados", "shares_totales", "shares_totales", "concursos_participados","tickets_canjeados","difference_last_and_first_share")
+keep <-c("puntos_historicos", "puntos", "puntos_gastados", "shares_totales", "concursos_participados","tickets_canjeados","difference_last_and_first_share")
 users_kmeans <- users[keep]
 rownames(users_kmeans) <- NULL
 users_kmeans$tickets_canjeados <- sapply(users_kmeans$tickets_canjeados, function(x){if(is.na(x)){ return(0)} else {return(x)} })
@@ -264,14 +267,44 @@ videos_kmeans_result <- kmeans(videos_kmeans, thumbs_clusters)
 videos_kmodes_result <- kmodes(videos_kmeans, thumbs_clusters)
 
 #
+#   DIST MATRIX
+#
+
+videos_dist = dist(videos_kmeans)
+users_dist = dist(users_kmeans)
+
+#
 #   AGGLOMERATIVE NESTING
 #
 
 # USERS
 
 users_agnes_result <- agnes(users, FALSE)
+users_discrete_agnes_result <- agnes(users_apriori, FALSE)
 
 # VIDEOS
 
-users_agnes_result <- agnes(videos, FALSE)
+videos_agnes_result <- agnes(videos, FALSE)
+videos_discrete_agnes_result <- agnes(videos_apriori, FALSE)
 
+#
+#   DBSCAN
+#
+
+# USERS
+
+users_dbscan_result <- dbscan(users_kmeans, eps=10, MinPts=10)
+plot(users_dbscan_result, users_kmeans)
+
+# VIDEOS
+
+videos_dbscan_result <- dbscan(videos_kmeans, eps=20)
+plot(videos_dbscan_result, videos_kmeans)
+
+#
+#   CLIQUIE
+#
+
+# USERS
+
+#users_clique_result <- clique(users_dist,30)
