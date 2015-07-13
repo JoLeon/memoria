@@ -126,6 +126,30 @@ generalRangesWithZero <- function(variable, range, unit){
     paste("Entre",((rango*range)),"y",((rango*range)+(range-1)),unit)
   }
 }
+testingOptimalK <- function(data,interval){
+  optimistic <- as.integer(sqrt(nrow(data)/2))
+  kmin <- optimistic-interval
+  kmax <- optimistic+interval
+  if(kmin <= 0){
+    kmin <- 2
+  }
+  result <- data.frame(list(K = 1, betweens_to_max = 2, withins_to_min = 3))
+  print(paste("Iterando entre",kmin,"y",kmax,"..."))
+  current_row <- 0
+  for(k in kmin:kmax){
+    print(paste("k:",k))
+    current_row <- current_row + 1
+    kbet <- c()
+    kwit <- c()
+    for(i in 1:100){
+      kmeans_result <- kmeans(data,k)
+      kbet <- append(kbet,kmeans_result$betweenss)
+      kwit <- append(kwit,kmeans_result$tot.withinss)
+    }
+    result[current_row,] <- c(k, mean(kbet), mean(kwit))
+  }
+  return(result)
+}
 
 # Librerias
 library(arules)
@@ -140,6 +164,117 @@ library(outliers)
 
 users <- read.csv("Data/users.csv", header = TRUE, sep=";")
 videos <- read.csv("Data/videos.csv", header = TRUE, sep=";")
+
+
+#
+#   SACANDO OUTLIERS
+#
+
+users_clean <- users
+str(users_clean)
+
+# puntos_historicos
+plot(users_clean$puntos_historicos)
+plot(users_clean$puntos_historicos,ylim=c(0,80000))
+users_clean <- subset(users_clean, puntos_historicos <= 80000)
+plot(users_clean$puntos_historicos)
+
+# puntos
+
+plot(users_clean$puntos)
+plot(users_clean$puntos,ylim=c(0,60000))
+users_clean <- subset(users_clean, puntos <= 60000)
+plot(users_clean$puntos)
+
+# puntos_gastados
+
+plot(users_clean$puntos_gastados)
+plot(users_clean$puntos_gastados,ylim=c(0,60000))
+users_clean <- subset(users_clean, puntos_gastados <= 60000)
+plot(users_clean$puntos_gastados)
+
+# shares_totales
+
+plot(users_clean$shares_totales)
+plot(users_clean$shares_totales,ylim=c(0,100))
+users_clean <- subset(users_clean, shares_totales <= 100)
+plot(users_clean$shares_totales)
+
+# concursos_participados
+
+plot(users_clean$concursos_participados)
+plot(users_clean$concursos_participados,ylim=c(0,10))
+users_clean <- subset(users_clean, concursos_participados <= 10)
+plot(users_clean$concursos_participados)
+
+# tickets_canjeados
+
+plot(users_clean$tickets_canjeados)
+plot(users_clean$tickets_canjeados,ylim=c(0,45))
+users_clean$tickets_canjeados <- sapply(users_clean$tickets_canjeados, function(x){if(is.na(x)){ return(0)} else {return(x)} })
+users_clean <- subset(users_clean, tickets_canjeados <= 45)
+plot(users_clean$tickets_canjeados)
+
+
+videos_clean <- videos
+str(videos_clean)
+
+# points_per_view
+
+plot(videos_clean$points_per_view)
+plot(videos_clean$points_per_view,ylim=c(0,110))
+videos_clean <- subset(videos_clean, points_per_view <= 110)
+plot(videos_clean$points_per_view)
+
+# duracion
+
+plot(videos_clean$duracion)
+plot(videos_clean$duracion,ylim=c(0,600))
+videos_clean <- subset(videos_clean, duracion <= 600)
+plot(videos_clean$duracion)
+
+# release_difference
+
+plot(videos_clean$release_difference)
+plot(videos_clean$release_difference,ylim=c(0,1000000))
+videos_clean <- subset(videos_clean, release_difference <= 1000000)
+videos_clean <- subset(videos_clean, release_difference >= 0)
+plot(videos_clean$release_difference)
+
+# total_views
+
+plot(videos_clean$total_views)
+plot(videos_clean$total_views,ylim=c(0,6500))
+videos_clean <- subset(videos_clean, total_views <= 6500)
+plot(videos_clean$total_views)
+
+# points_given
+
+plot(videos_clean$points_given)
+plot(videos_clean$points_given,ylim=c(0,100000))
+videos_clean <- subset(videos_clean, points_given <= 100000)
+plot(videos_clean$points_given)
+
+# shares_first_day
+
+plot(videos_clean$shares_first_day)
+plot(videos_clean$shares_first_day,ylim=c(0,15))
+videos_clean <- subset(videos_clean, shares_first_day <= 15)
+plot(videos_clean$shares_first_day)
+
+# shares_first_week
+
+plot(videos_clean$shares_first_week)
+plot(videos_clean$shares_first_week,ylim=c(0,30))
+videos_clean <- subset(videos_clean, shares_first_week <= 30)
+plot(videos_clean$shares_first_week)
+
+# total_shares
+
+plot(videos_clean$total_shares)
+plot(videos_clean$total_shares,ylim=c(0,80))
+videos_clean <- subset(videos_clean, total_shares <= 80)
+plot(videos_clean$total_shares)
 
 #
 #   APRIORI + ECLAT
@@ -246,11 +381,10 @@ rownames(users_kmeans) <- NULL
 users_kmeans$tickets_canjeados <- sapply(users_kmeans$tickets_canjeados, function(x){if(is.na(x)){ return(0)} else {return(x)} })
 users_kmeans <- users_kmeans[users_kmeans$difference_last_and_first_share != -1,]
 
-observations <- nrow(users_kmeans)
-thumbs_clusters <- as.integer(sqrt(observations/2))
-
-users_kmeans_result <- kmeans(users_kmeans, thumbs_clusters)
-users_kmodes_result <- kmodes(users_kmeans, thumbs_clusters)
+users_kmeans_clean <- users_clean[keep]
+rownames(users_kmeans_clean) <- NULL
+users_kmeans_clean$tickets_canjeados <- sapply(users_kmeans_clean$tickets_canjeados, function(x){if(is.na(x)){ return(0)} else {return(x)} })
+users_kmeans_clean <- users_kmeans_clean[users_kmeans_clean$difference_last_and_first_share != -1,]
 
 # VIDEOS
 
@@ -261,38 +395,26 @@ videos_kmeans <- videos_kmeans[complete.cases(videos_kmeans), ] # SACAR ROWS CON
 names(videos_kmeans)[names(videos_kmeans)=="X1_week_active_users_at_release"] <- "active_users"
 names(videos_kmeans)[names(videos_kmeans)=="total_users_at_release"] <- "total_users"
 
+videos_kmeans_clean <- videos_clean[keep]
+videos_kmeans_clean <- videos_kmeans_clean[complete.cases(videos_kmeans_clean), ] # SACAR ROWS CONMISSING VALUES
+names(videos_kmeans_clean)[names(videos_kmeans_clean)=="X1_week_active_users_at_release"] <- "active_users"
+names(videos_kmeans_clean)[names(videos_kmeans_clean)=="total_users_at_release"] <- "total_users"
+
 #   SE BUSCA MAXIMIZAR DISTANCIA ENTRE CENTROS (BETWEENESS) Y MINIMIZAR DISTANCIA ENTRE CENTROS Y SUS DATOS (WITHINESS)
 #   MAX(BETWEENSS) y MIN(WITHINSS)
-testingOptimalK <- function(data){
-    optimistic <- as.integer(sqrt(nrow(data)/2))
-    kmin <- optimistic-10
-    kmax <- optimistic+10
-    if(kmin <= 0){
-      kmin <- 2
-    }
-    result <- data.frame(list(K = 1, betweens_to_max = 2, withins_to_min = 3))
-    print(paste("Iterando entre",kmin,"y",kmax,"..."))
-    current_row <- 0
-    for(k in kmin:kmax){
-      print(paste("k:",k))
-      current_row <- current_row + 1
-      kbet <- c()
-      kwit <- c()
-      for(i in 1:100){
-        kmeans_result <- kmeans(data,k)
-        kbet <- append(kbet,kmeans_result$betweenss)
-        kwit <- append(kwit,kmeans_result$tot.withinss)
-      }
-      result[current_row,] <- c(k, mean(kbet), mean(kwit))
-    }
-    return(result)
-}
 
-optimos_kmeans_videos <- testingOptimalK(videos_kmeans)
+optimos_kmeans_users <- testingOptimalK(users_kmeans,15)
+optimos_kmeans_users_clean <- testingOptimalK(users_kmeans_clean,15)
 
-videos_kmeans_result <- kmeans(videos_kmeans, 100)
+# SE DESPRENDE QUE EL K OPTIMO PARA LOS DATOS ES K = 36
+users_kmeans_result <- kmeans(users_kmeans, 36)
+users_kmodes_result <- kmodes(users_kmeans, 36)
 
-videos_kmodes_result <- kmodes(videos_kmeans, thumbs_clusters)
+optimos_kmeans_videos <- testingOptimalK(videos_kmeans,15)
+
+# SE DESPRENDE QUE EL K OPTIMO PARA LOS DATOS ES K = 32
+videos_kmeans_result <- kmeans(videos_kmeans, 32)
+videos_kmodes_result <- kmodes(videos_kmeans, 32)
 
 #
 #   DIST MATRIX
