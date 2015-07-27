@@ -158,7 +158,6 @@ library(cluster)
 library(graphics)
 library(fpc)
 library(optpart)
-library(outliers)
 
 # Data
 
@@ -317,7 +316,44 @@ inspect(rules_users_apriori)
 rules_users_eclat <- eclat(users_apriori, list(support=0.2))
 inspect(rules_users_eclat)
 
-#VIDEOS
+# USERS CLEAN
+
+users_apriori_clean <- users_clean
+users_apriori_clean$hora_afiliacion <- as.factor(users_apriori_clean$hora_afiliacion)
+users_apriori_clean$dia_afiliacion <- sapply(users_apriori_clean$dia_afiliacion, getDayName)
+
+users_apriori_clean$edad <- sapply(users_apriori_clean$nacimiento, getEdad)
+
+users_apriori_clean$tickets_canjeados <- sapply(users_apriori_clean$tickets_canjeados, cleanTicketsCanjeados)
+
+users_apriori_clean$tickets_canjeados_rango <- mapply(generalRanges, users_apriori_clean$tickets_canjeados, 5, "tickets")
+users_apriori_clean$tickets_canjeados_rango <- as.factor(users_apriori_clean$tickets_canjeados_rango)
+
+users_apriori_clean$puntos_historicos_rango <- mapply(generalRanges, users_apriori_clean$puntos_historicos, 500, "puntos")
+users_apriori_clean$puntos_historicos_rango <- as.factor(users_apriori_clean$puntos_historicos_rango)
+
+users_apriori_clean$puntos_gastados_rango <- mapply(generalRanges, users_apriori_clean$puntos_gastados, 500, "puntos")
+users_apriori_clean$puntos_gastados_rango <- as.factor(users_apriori_clean$puntos_gastados_rango)
+
+users_apriori_clean$shares_totales_rango <- mapply(generalRanges, users_apriori_clean$shares_totales, 5, "shares")
+users_apriori_clean$shares_totales_rango <- as.factor(users_apriori_clean$shares_totales_rango)
+
+users_apriori_clean$concursos_participados_rango <- mapply(generalRanges, users_apriori_clean$concursos_participados, 5, "concursos")
+users_apriori_clean$concursos_participados_rango <- as.factor(users_apriori_clean$concursos_participados_rango)
+
+users_apriori_clean$shares_frequency <- mapply(setUserShareFrequency,users_apriori_clean$difference_last_and_first_share,users_apriori_clean$shares_totales)
+users_apriori_clean$quality <- mapply(getUserQuality,users_apriori_clean$difference_last_and_first_share,users_apriori_clean$shares_frequency)
+
+keep <- c("uni", "genero", "hora_afiliacion", "dia_afiliacion", "categoria_dominante","edad", "quality", "tickets_canjeados_rango", "puntos_historicos_rango", "puntos_gastados_rango", "shares_totales_rango", "concursos_participados_rango")
+users_apriori_clean <- users_apriori_clean[keep]
+
+rules_users_apriori_clean <- apriori(users_apriori_clean, list(support=0.1))
+inspect(rules_users_apriori_clean)
+
+rules_users_eclat_clean <- eclat(users_apriori_clean, list(support=0.2))
+inspect(rules_users_eclat_clean)
+
+# VIDEOS
 
 keep <- c("category","points_per_view","points_given","release_difference","duracion", "total_views","shares_first_day","shares_first_week","shares_first_month","total_shares","total_users_at_release","X1_week_active_users_at_release","X1_week_new_users_at_release","active_raffles_at_release")
 videos_apriori <- videos[keep]
@@ -369,6 +405,58 @@ inspect(rules_videos_apriori)
 rules_videos_eclat <- eclat(videos_apriori, list(support=0.4))
 inspect(rules_videos_eclat)
 
+# VIDEOS CLEAN
+
+keep <- c("category","points_per_view","points_given","release_difference","duracion", "total_views","shares_first_day","shares_first_week","shares_first_month","total_shares","total_users_at_release","X1_week_active_users_at_release","X1_week_new_users_at_release","active_raffles_at_release")
+videos_apriori_clean <- videos_clean[keep]
+
+videos_apriori_clean$duracion_rangos <- mapply(generalRanges, videos_apriori_clean$duracion, 30, "segundos")
+videos_apriori_clean$duracion_rangos <- as.factor(videos_apriori_clean$duracion_rangos)
+
+videos_apriori_clean$active_raffles_at_release_rangos <- mapply(generalRanges, videos_apriori_clean$active_raffles_at_release, 3, "concursos")
+videos_apriori_clean$active_raffles_at_release_rangos <- as.factor(videos_apriori_clean$active_raffles_at_release_rangos)
+
+videos_apriori_clean$new_users_rangos <- mapply(generalRanges, videos_apriori_clean$X1_week_new_users_at_release , 15, "usuarios")
+videos_apriori_clean$new_users_rangos <- as.factor(videos_apriori_clean$new_users_rangos)
+
+videos_apriori_clean$active_users_rangos <- mapply(generalRanges, videos_apriori_clean$X1_week_active_users_at_release , 15, "usuarios")
+videos_apriori_clean$active_users_rangos <- as.factor(videos_apriori_clean$active_users_rangos)
+
+videos_apriori_clean$total_users_rangos <- mapply(generalRanges, videos_apriori_clean$total_users_at_release , 200, "usuarios")
+videos_apriori_clean$total_users_rangos <- as.factor(videos_apriori_clean$total_users_rangos)
+
+videos_apriori_clean$total_shares_rangos <- mapply(generalRanges, videos_apriori_clean$total_shares , 10, "shares")
+videos_apriori_clean$total_shares_rangos <- as.factor(videos_apriori_clean$total_shares_rangos)
+
+videos_apriori_clean$shares_first_month_rango <- mapply(generalRanges, videos_apriori_clean$shares_first_month, 5, "shares")
+videos_apriori_clean$shares_first_month_rango <- as.factor(videos_apriori_clean$shares_first_month_rango)
+
+videos_apriori_clean$shares_first_week_rango <- mapply(generalRanges, videos_apriori_clean$shares_first_week, 5, "shares")
+videos_apriori_clean$shares_first_week_rango <- as.factor(videos_apriori_clean$shares_first_week_rango)
+
+videos_apriori_clean$shares_first_day_rango <- mapply(generalRanges, videos_apriori_clean$shares_first_day, 5, "shares")
+videos_apriori_clean$shares_first_day_rango <- as.factor(videos_apriori_clean$shares_first_day_rango)
+
+videos_apriori_clean$total_views_rango <- mapply(generalRanges, videos_apriori_clean$total_views , 50, "vistas")
+videos_apriori_clean$total_views_rango <- as.factor(videos_apriori_clean$total_views_rango)
+
+videos_apriori_clean$release_difference <- sapply(videos_apriori_clean$release_difference, function(x){if(is.na(x) || x == 0){ return(NA)} else {return(round((x/60/60/24),0))}})
+videos_apriori_clean$release_difference_rango <- mapply(generalRangesWithZero, videos_apriori_clean$release_difference , 3, "dias")
+videos_apriori_clean$release_difference_rango <- as.factor(videos_apriori_clean$release_difference_rango)
+
+videos_apriori_clean$avg_ppv <- mapply(function(views, points){if(points == 0 || views == 0){ return(NA) } else { return(points/views) }}, videos_apriori_clean$total_views, videos_apriori_clean$points_given)
+videos_apriori_clean$avg_ppv_rangos <- mapply(generalRanges, videos_apriori_clean$avg_ppv , 10, "puntos")
+videos_apriori_clean$avg_ppv_rangos <- as.factor(videos_apriori_clean$avg_ppv_rangos)
+
+keep <- c("active_users_rangos", "total_shares_rangos","total_views_rango","release_difference_rango","avg_ppv_rangos")
+videos_apriori_clean <- videos_apriori_clean[keep]
+
+rules_videos_apriori_clean <- apriori(videos_apriori_clean, list(support=0.2))
+inspect(rules_videos_apriori_clean)
+
+rules_videos_eclat_clean <- eclat(videos_apriori_clean, list(support=0.4))
+inspect(rules_videos_eclat_clean)
+
 #
 #   K-MEANS + K-MODES
 #
@@ -410,11 +498,19 @@ optimos_kmeans_users_clean <- testingOptimalK(users_kmeans_clean,15)
 users_kmeans_result <- kmeans(users_kmeans, 36)
 users_kmodes_result <- kmodes(users_kmeans, 36)
 
+users_kmeans_clean_result <- kmeans(users_kmeans_clean, 36)
+users_kmodes_clean_result <- kmodes(users_kmeans_clean, 36)
+plot(users_kmeans_clean,col=users_kmeans_clean_result$cluster)
+
 optimos_kmeans_videos <- testingOptimalK(videos_kmeans,15)
 
 # SE DESPRENDE QUE EL K OPTIMO PARA LOS DATOS ES K = 32
 videos_kmeans_result <- kmeans(videos_kmeans, 32)
 videos_kmodes_result <- kmodes(videos_kmeans, 32)
+
+videos_kmeans_clean_result <- kmeans(videos_kmeans_clean, 32)
+videos_kmodes_clean_result <- kmodes(videos_kmeans_clean, 32)
+plot(videos_kmeans_clean,col=videos_kmeans_clean_result$cluster)
 
 #
 #   DIST MATRIX
@@ -432,10 +528,38 @@ users_dist = dist(users_kmeans)
 users_agnes_result <- agnes(users, FALSE)
 users_discrete_agnes_result <- agnes(users_apriori, FALSE)
 
+users_agnes_clean_result <- agnes(users_clean, FALSE)
+users_clean_discrete_agnes_result <- agnes(users_apriori_clean, FALSE)
+
 # VIDEOS
 
 videos_agnes_result <- agnes(videos, FALSE)
 videos_discrete_agnes_result <- agnes(videos_apriori, FALSE)
+
+videos_agnes_clean_result <- agnes(videos_clean, FALSE)
+videos_clean_discrete_agnes_result <- agnes(videos_apriori_clean, FALSE)
+
+
+#
+#   Divisive Analysis
+#
+
+# USERS
+
+users_diana_result <- diana(users, FALSE)
+users_discrete_diana_result <- diana(users_apriori, FALSE)
+
+users_diana_clean_result <- diana(users_clean, FALSE)
+users_clean_discrete_diana_result <- diana(users_apriori_clean, FALSE)
+
+# VIDEOS
+
+videos_diana_result <- diana(videos, FALSE)
+videos_discrete_diana_result <- diana(videos_apriori, FALSE)
+
+videos_diana_clean_result <- diana(videos_clean, FALSE)
+videos_clean_discrete_diana_result <- diana(videos_apriori_clean, FALSE)
+
 
 #
 #   DBSCAN
@@ -446,10 +570,16 @@ videos_discrete_agnes_result <- agnes(videos_apriori, FALSE)
 users_dbscan_result <- dbscan(users_kmeans, eps=10, MinPts=10)
 plot(users_dbscan_result, users_kmeans)
 
+users_dbscan_clean_result <- dbscan(users_kmeans_clean, eps=10, MinPts=10)
+plot(users_dbscan_clean_result, users_kmeans_clean)
+
 # VIDEOS
 
 videos_dbscan_result <- dbscan(videos_kmeans, eps=20)
 plot(videos_dbscan_result, videos_kmeans)
+
+videos_dbscan_clean_result <- dbscan(videos_kmeans_clean, eps=20,showplot=1)
+plot(videos_dbscan_clean_result, videos_kmeans_clean)
 
 #
 #   CLIQUIE
