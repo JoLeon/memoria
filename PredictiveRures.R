@@ -127,5 +127,32 @@ videos$success <- mapply(function(views, shares){if(shares > 100 || views >= 800
 keep <- c("category", "duracion", "release_difference", "shares_first_day", "X1_week_active_users_at_release","X1_week_active_raffles", "avg_ppv", "success")
 videos_clean_kept <- videos_clean[keep]
 videos_kept <- videos[keep]
+videos_kept$success <- as.factor(videos_kept$success)
 
+videos_kept <- videos_kept[videos_kept$release_difference != -1, ] #SACAR RELEASE DIFFERENCE -1 (NA)
+videos_kept <- videos_kept[complete.cases(videos_kept), ] # SACAR ROWS CONMISSING VALUES
 
+# Separando el dataframe en test y training
+
+library(party)
+
+# 3/4 de los datos para entrentamiento
+smp_size <- floor(0.75 * nrow(videos_kept))
+
+# Setteo de seen para que sea reproducible
+set.seed(123)
+train_ind <- sample(seq_len(nrow(videos_kept)), size = smp_size)
+
+videos_train <- videos_kept[train_ind, ]
+videos_test <- videos_kept[-train_ind, ]
+
+videos_tree <- ctree(success ~ ., data = videos_train)
+plot(videos_tree)
+
+library(klaR)
+
+videos_bayes <- NaiveBayes(success ~ ., data = videos_train)
+videos_bayes
+
+predict(videos_bayes)
+plot(videos_bayes)
