@@ -146,6 +146,8 @@ train_ind <- sample(seq_len(nrow(videos_kept)), size = smp_size)
 videos_train <- videos_kept[train_ind, ]
 videos_test <- videos_kept[-train_ind, ]
 
+# SUBMUESTREAR (LOS QUE SE REPITEN MÁS, EN ESTE CASO LOS "0", Y SUPERMUESTRAR LOS QUE SEAN MENOS, EN ESTE CASO "1")
+
 videos_tree <- ctree(success ~ ., data = videos_train)
 plot(videos_tree)
 

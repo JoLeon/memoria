@@ -562,7 +562,8 @@ videos_clean_discrete_diana_result <- diana(videos_apriori_clean, FALSE)
 
 
 #
-#   DBSCAN
+#   DBSCAN: ->  Este algoritmo no considera los datos apartados (lejanos) como parte de un cluster, por lo que no distoriciona el cluster mismo,
+#               en otras palabras, hay datos que quedan sin partenecer a ningún cluster, investigar más sobre este algoritmo, sus parámetros y resultados.
 #
 
 # USERS
@@ -580,11 +581,3 @@ plot(videos_dbscan_result, videos_kmeans)
 
 videos_dbscan_clean_result <- dbscan(videos_kmeans_clean, eps=20,showplot=1)
 plot(videos_dbscan_clean_result, videos_kmeans_clean)
-
-#
-#   CLIQUIE
-#
-
-# USERS
-
-#users_clique_result <- clique(users_dist,30)
