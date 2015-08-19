@@ -3,13 +3,15 @@
 if(!require("RMySQL")){
   install.packages("RMySQL",dep=TRUE)
 }
+library(RMySQL)
 warn=1
 con <- dbConnect(MySQL(), user="root", password="1234", dbname="mem_playgue", host="localhost")
 # QUERY PARA VIDEOS
 videos <- dbGetQuery(con, 
 	"SELECT 
 		videos.id, 
-		url, 
+		url,
+    saldo_actual,
 		categorias.nombre AS category, 
 		puja AS points_per_view, 
 		videos.created_at AS release_date,
