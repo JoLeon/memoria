@@ -1,0 +1,1 @@
+http://nlp.stanford.edu/IR-book/html/htmledition/cluster-cardinality-in-k-means-1.html
