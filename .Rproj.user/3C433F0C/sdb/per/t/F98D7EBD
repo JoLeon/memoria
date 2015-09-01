@@ -1,0 +1,25 @@
+{
+    "contents" : "",
+    "created" : 1440973172627.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "F98D7EBD",
+    "lastKnownWriteTime" : 7011605692497750387,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "998mwfmr1m",
+        "caption" : "videos_num_mm",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=videos_num_mm&cache_key=998mwfmr1m",
+        "displayedObservations" : 921,
+        "environment" : "",
+        "object" : "videos_num_mm",
+        "totalObservations" : 921,
+        "variables" : 13
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "type" : "r_dataframe"
+}

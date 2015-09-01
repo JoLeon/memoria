@@ -1,0 +1,18 @@
+{
+    "contents" : "# Reglas de asociación\n\n  # APRIORI\n\n    # USERS\n      apriori_users <- apriori(users_dis, list(support=0.6))\n      inspect(apriori_users)\n      \n      # La gran cantidad de datos en 0, dan una lista de reglas sin valor, se modifican los parámetros de la función (lógica-> esconder los rangos 0)\n      apriori_users_appereance_list = list(\n        none = c(\n          \"rango_tickets_canjeados=[  0.00,  6.43)\",\n          \"rango_puntos_historicos=[     0,  4651)\",\n          \"rango_puntos_gastados=[     0,  4252)\",\n          \"rango_shares_totales=[  0.00,  8.69)\",\n          \"rango_concursos_participados=[ 0.00, 1.21)\",\n          \"rango_shares_frequecy=[  0.00,  3.93)\",\n          \"rango_total_activity=[  0.0, 26.7)\"   \n        ),\n        default = \"both\"\n      )\n      apriori_users2 <- apriori(users_dis, parameter =list(support=0.05,confidence=0.4), appearance = apriori_users_appereance_list)\n      inspect(apriori_users2)\n      \n      # Las reglas resultantes siguen sin entregar información de valor, se deshecha algoritmo apriori\n      \n    # VIDEOS\n      apriori_videos <- apriori(videos_dis, paramete = list(support=0.8, confidence=0.8))\n      inspect(apriori_videos)\n      \n      # Interesa saber si hay algún patrón que signifique que el video es compartido hasta que se depleta\n      apriori_videos_appereance_list = list(\n        rhs = c(\n          \"is_depleted=1\"   \n        ),\n        default = \"lhs\"\n      )\n      apriori_videos_depleted <- apriori(videos_dis, parameter = list(support=0.5, confidence=0.7), appearance = apriori_videos_appereance_list)\n      inspect(apriori_videos_depleted)\n      # No se encontraron reglas de asociacion para este caso\n\n  # ECLAT\n\n    # USERS\n      eclat_users <- eclat(users_dis, list(support=0.7))\n      inspect(eclat_users)\n      \n    # VIDEOS\n      eclat_videos <- eclat(videos_dis, list(support=0.7))\n      inspect(eclat_videos)\n  \n",
+    "created" : 1440365129270.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1900088657",
+    "id" : "6DBAD61A",
+    "lastKnownWriteTime" : 1440522305,
+    "path" : "~/GitHub/memoria/Step2_associatonRules.R",
+    "project_path" : "Step2_associatonRules.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
