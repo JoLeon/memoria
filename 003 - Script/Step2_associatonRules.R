@@ -15,12 +15,31 @@
           "rango_shares_totales=[  0.00,  8.69)",
           "rango_concursos_participados=[ 0.00, 1.21)",
           "rango_shares_frequecy=[  0.00,  3.93)",
-          "rango_total_activity=[  0.0, 26.7)"   
+          "rango_total_activity=[  0.0, 33.8)"   
         ),
         default = "both"
       )
       apriori_users2 <- apriori(users_dis, parameter =list(support=0.05,confidence=0.4), appearance = apriori_users_appereance_list)
       inspect(apriori_users2)
+      
+      keep_users_dis <- c(
+        "categoria_dominante", 
+        "uni", 
+        "genero", 
+        "hora_afiliacion", 
+        "dia_afiliacion", 
+        "edad", 
+        "rango_shares_totales" 
+      )
+      users_dis_reduced <- users_dis[keep_users_dis]
+      apriori_users_appereance_list = list(
+        none = c(
+          "rango_shares_totales=[  0.00,  8.69)"
+        ),
+        default = "both"
+      )
+      apriori_users_reduced <- apriori(users_dis_reduced, parameter=list(support=0.01), appearance = apriori_users_appereance_list)
+      inspect(apriori_users_reduced)
       
       # Las reglas resultantes siguen sin entregar información de valor, se deshecha algoritmo apriori
       
@@ -35,7 +54,7 @@
         ),
         default = "lhs"
       )
-      apriori_videos_depleted <- apriori(videos_dis, parameter = list(support=0.5, confidence=0.7), appearance = apriori_videos_appereance_list)
+      apriori_videos_depleted <- apriori(videos_dis, parameter = list(support=0.01, confidence=0.1), appearance = apriori_videos_appereance_list)
       inspect(apriori_videos_depleted)
       # No se encontraron reglas de asociacion para este caso
 
