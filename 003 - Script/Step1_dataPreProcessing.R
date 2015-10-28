@@ -8,6 +8,7 @@
     users$edad <- sapply(users$nacimiento, getEdad)
     users$tickets_canjeados <- sapply(users$tickets_canjeados, cleanTicketsCanjeados)
     users$shares_frequency <- mapply(setUserShareFrequency,users$difference_last_and_first_share,users$shares_totales) # Días
+    users$categoria_dominante <- sapply(users$categoria_dominante, fixCategoria)
     
   # Renombrar variable
     names(users)[names(users)=="difference_last_and_first_share"] <- "total_activity"

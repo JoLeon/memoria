@@ -258,6 +258,15 @@
       }
       return(total/registros)
     }
+    fixCategoria <- function(cat){
+      print(cat)
+      if(!is.na(cat) && cat == "M"){
+        return(as.factor("MISC"))
+      }
+      else{
+        return(as.factor(cat))
+      }
+    }
     
   # LIBRARIES
   
@@ -272,5 +281,5 @@
   
   # DATA
   
-    users <- read.csv("Data/users.csv", header = TRUE, sep=";")
-    videos <- read.csv("Data/videos.csv", header = TRUE, sep=";")
+    users <- read.csv("../002 - Data/users.csv", header = TRUE, sep=";")
+    videos <- read.csv("../002 - Data/videos.csv", header = TRUE, sep=";")
