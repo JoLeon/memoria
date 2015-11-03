@@ -169,6 +169,30 @@
       }
       return(result)
     }
+    testingOptimalKFixed <- function(data,kmin, kmax){
+      #optimistic <- as.integer(sqrt(nrow(data)/2))
+      #kmin <- optimistic-interval
+      #kmax <- optimistic+interval
+      #if(kmin <= 0){
+        #kmin <- 2
+      #}
+      result <- data.frame(list(K = 1, betweens_to_max = 2, withins_to_min = 3))
+      print(paste("Iterando entre",kmin,"y",kmax,"..."))
+      current_row <- 0
+      for(k in kmin:kmax){
+        print(paste("k:",k))
+        current_row <- current_row + 1
+        kbet <- c()
+        kwit <- c()
+        for(i in 1:100){
+          kmeans_result <- kmeans(data,k,iter.max = 40)
+          kbet <- append(kbet,kmeans_result$betweenss)
+          kwit <- append(kwit,kmeans_result$tot.withinss)
+        }
+        result[current_row,] <- c(k, mean(kbet), mean(kwit))
+      }
+      return(result)
+    }
     testingOptimalKVector <- function(data,interval){
       optimistic <- as.integer(sqrt(length(data)/2))
       kmin <- optimistic-interval
