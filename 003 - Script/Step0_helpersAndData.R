@@ -302,8 +302,10 @@
     library(optpart)
     library(Hmisc)
     library(foreach)
+    library(sqldf)
   
   # DATA
   
     users <- read.csv("../002 - Data/users.csv", header = TRUE, sep=";")
     videos <- read.csv("../002 - Data/videos.csv", header = TRUE, sep=";")
+    shares <- read.csv("../002 - Data/shares.csv", header = TRUE, sep=";")
