@@ -8,7 +8,11 @@
     users$edad <- sapply(users$nacimiento, getEdad)
     users$tickets_canjeados <- sapply(users$tickets_canjeados, cleanTicketsCanjeados)
     users$shares_frequency <- mapply(setUserShareFrequency,users$difference_last_and_first_share,users$shares_totales) # Días
+    users$quality <- mapply(getUserQuality,users$difference_last_and_first_share,users$shares_frequency) 
+    users$quality_id <- mapply(getUserQualityId,users$difference_last_and_first_share,users$shares_frequency)
     users$categoria_dominante <- sapply(users$categoria_dominante, fixCategoria)
+    users$fecha_afiliacion <- as.Date(users$fecha_afiliacion)
+    users$activity_on_register <- sapply(users$fecha_afiliacion, getActivityOnRegister)
     
   # Renombrar variable
     names(users)[names(users)=="difference_last_and_first_share"] <- "total_activity"
@@ -31,6 +35,8 @@
     users$rango_concursos_participados <- discretize(users$concursos_participados, method="cluster", categories=5)
     users$rango_shares_frequecy <- discretize(users$shares_frequency, method="cluster", categories=5)
     users$rango_total_activity <- discretize(users$total_activity, method="cluster", categories=5)
+    users$rango_activity_on_register <- discretize(users$total_activity, method="cluster", categories=5)
+    
     
   # Normalización de variables numéricas:
   # Debido a que los intervalos númericos son muy iregulares entre si (puntos tiene orden de miles, tickets de decenas), se hace necesario
@@ -97,6 +103,10 @@
     videos$avg_ppv <- mapply(getAvgPpv, videos$total_views, videos$points_given)
     videos$is_depleted <- mapply(isDepleted, videos$saldo_actual, videos$points_given)
     videos$release_day <- sapply(videos$release_date, getReleaseDay)
+    videos$release_date <- as.Date(videos$release_date)
+    videos$release_date_youtube <- as.Date(videos$release_date_youtube)
+    videos$release_date_minus_3 <- as.factor(videos$release_date - 3)
+    videos$release_date_plus_3 <- as.factor(videos$release_date + 3)
     
   # Renombrar variable
     names(videos)[names(videos)=="X1_week_active_users_at_release"] <- "active_users"
