@@ -274,17 +274,13 @@ testingOptimalKVector <- function(data,interval){
   return(result)
 }
 releaseDifferenceToDays <- function(x){
-  if(is.na(x) || x == 0 || x == -1){ 
-    return(NA)
+  if(x < 0 || is.na(x)){
+    x <- round(runif(1,0,30))
   }
-  else {
-    if(x < 0){
-      return(NA)
-    }
-    else{
-      return(round((x/60/60/24),0))
-    }
+  if(x == 0){
+    return(0)
   }
+  return(round((x/60/60/24),0))
 }
 getAvgPpv <- function(views, points){
   if(points == 0 || views == 0){ 
@@ -367,6 +363,12 @@ library(sqldf)
 
 # DATA
 
-users <- read.csv("../002 - Data/users.csv", header = TRUE, sep=";")
-videos <- read.csv("../002 - Data/videos.csv", header = TRUE, sep=";")
-shares <- read.csv("../002 - Data/shares.csv", header = TRUE, sep=";")
+#WIN
+#users_raw <- read.csv("../002 - Data/users.csv", header = TRUE, sep=";")
+#videos_raw <- read.csv("../002 - Data/videos.csv", header = TRUE, sep=";")
+#shares_raw <- read.csv("../002 - Data/shares.csv", header = TRUE, sep=";")
+
+#LINUX
+users_raw <- read.csv("/home/jleon/memoria/002\ -\ Data/users.csv", header = TRUE, sep=";")
+videos_raw <- read.csv("/home/jleon/memoria/002\ -\ Data/videos.csv", header = TRUE, sep=";")
+shares_raw <- read.csv("/home/jleon/memoria/002\ -\ Data/shares.csv", header = TRUE, sep=";")
