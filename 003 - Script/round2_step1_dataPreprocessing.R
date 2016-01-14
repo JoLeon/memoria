@@ -1,8 +1,8 @@
 # Limpieza de variables que no se van a usar
 
-videos <- videos_raw[with(videos_raw, order(id)), ]
+videos_raw <- videos_raw[with(videos_raw, order(id)), ]
+videos <- videos_raw
 videos[1,]$total_users <- 40
-# SORT BY DATE!
 
 keep <- c(
   "duracion",
@@ -49,6 +49,21 @@ videos$duracion <- sapply(videos$duracion, function(d){
   }
   return(d)
 })
+videos$active_users <- sapply(videos$active_users, function(a){
+  if(a == 0){
+    return (round(runif(1,10,15)))
+  }
+  if(a < 10){
+    return (a+round(runif(1,10,12)))
+  }
+  if(a < 20){
+    return (a+round(runif(1,3,7)))
+  }
+  if(a < 30){
+    return (a+round(runif(1,2,5)))
+  }
+  return(a)
+})
 videos$penetracion <- mapply(function(total_shares, total_users){
   return (round(total_shares*100/total_users, 2))
 }, videos$total_shares, videos$total_users)
@@ -67,29 +82,30 @@ for (i in (1:total)){
   active_raffles <- videos[i,]$active_raffles
   new_users <- videos[i,]$new_users
   total_users <- videos[i,]$total_users
+  total_shares <- videos[i,]$total_shares
   
   # + raffles => + actives
   probability <- 0
-  if(active_users > 10){ probability <- 0.001 }
-  if(active_users > 20){ probability <- 0.005 }
-  if(active_users > 30){ probability <- 0.015 }
-  if(active_users > 40){ probability <- 0.05 }
-  if(active_users > 50){ probability <- 0.10 }
-  if(active_users > 60){ probability <- 0.15 }
-  if(active_users > 70){ probability <- 0.67 }
-  if(active_users > 80){ probability <- 0.80 }
-  if(active_users > 90){ probability <- 0.90 }
-  if(active_users > 100){ probability <- 0.97 }
+  if(active_users > 10){ probability_raffles <- 0.001 }
+  if(active_users > 20){ probability_raffles <- 0.005 }
+  if(active_users > 30){ probability_raffles <- 0.015 }
+  if(active_users > 40){ probability_raffles <- 0.05 }
+  if(active_users > 50){ probability_raffles <- 0.10 }
+  if(active_users > 60){ probability_raffles <- 0.15 }
+  if(active_users > 70){ probability_raffles <- 0.67 }
+  if(active_users > 80){ probability_raffles <- 0.80 }
+  if(active_users > 90){ probability_raffles <- 0.90 }
+  if(active_users > 100){ probability_raffles <- 0.97 }
   
-  if(probability > runif(1,0,1)){
+  if(probability_raffles > runif(1,0,1)){
     videos[i,]$active_raffles <- round(runif(1,9,11))
   }
   else{
-    if(probability > runif(1,0,1)){
+    if(probability_raffles > runif(1,0,1)){
       videos[i,]$active_raffles <- round(runif(1,6,8))
     }
     else{
-      if(probability > runif(1,0,1)){
+      if(probability_raffles > runif(1,0,1)){
         videos[i,]$active_raffles <- round(runif(1,4,5))
       }
       else{
@@ -152,20 +168,24 @@ for (i in (1:total)){
   
   if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
     # Máxima penetracion, por lo tanto max(total_shares/active_users) tal que total_shares < total_users
-    videos[i,]$penetracion <- round(runif(1,0.5,0.7),2)
+    videos[i,]$penetracion <- round(runif(1,0.7,0.9),2)
   }
   else{
     if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
-      videos[i,]$penetracion <- round(runif(1,0.3,0.5),2)
+      videos[i,]$penetracion <- round(runif(1,0.5,0.7),2)
     }
     else{
       if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
-        videos[i,]$penetracion <- round(runif(1,0.2,0.3),2)
+        videos[i,]$penetracion <- round(runif(1,0.3,0.5),2)
       }
       else{
-        videos[i,]$penetracion <- round(runif(1,0,0.2),2)
+        videos[i,]$penetracion <- round(runif(1,0.01,0.3),2)
       }
     }
   }
   videos[i,]$total_shares <- round(active_users*videos[i,]$penetracion)
+  if(videos[i,]$total_shares == 0){
+    videos[i,]$total_shares <- round(runif(1,1,4))
+    videos[i,]$penetracion <- videos[i,]$total_shares/videos[i,]$active_users
+  }
 }
