@@ -335,7 +335,6 @@ mean_na <- function(vector){
   return(total/registros)
 }
 fixCategoria <- function(cat){
-  print(cat)
   if(!is.na(cat) && cat == "M"){
     return(as.factor("MISC"))
   }
