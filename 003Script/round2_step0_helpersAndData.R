@@ -1,4 +1,4 @@
-# HELPERS, LIBRERÍAS, Y CARGA DE DATOS
+# HELPERS, LIBRERÃAS, Y CARGA DE DATOS
 
 # HELPERS
 
@@ -172,7 +172,17 @@ getEdad <- function(fecha_nacimiento){
     as.factor(as.integer(as.numeric(edad, units="days")/365))
   }
   else{
-    as.factor(NA)
+    probability <- runif(1,0,1)
+    if(probability > 0.2){
+      return(as.factor(sample(c(20,21,22,23,24,25,26), size = 1, replace = TRUE, prob = c(0.05, 0.1, 0.3 ,0.15 ,0.20 ,0.15 ,0.05))))
+    }
+    if(probability > 0.15){
+      return(as.factor(sample(c(17,18,19,27,28,29,30,31,32), size = 1, replace = TRUE, prob = c(0.055,0.055,0.1,0.15,0.15,0.15,0.1,0.1,0.1))))
+    }
+    if(probability > 0.10){
+      return(as.factor(sample(c(13,14,15,16,33,34,35), size = 1, replace = TRUE, prob = c(0.01,0.09,0.15,0.25,0.25,0.15,0.1))))
+    }
+    return(as.factor(round(runif(1,36,47))))
   }
 }
 cleanTicketsCanjeados <- function(tickets_canjeados){
@@ -363,11 +373,11 @@ library(sqldf)
 # DATA
 
 #WIN
-#users_raw <- read.csv("../002 - Data/users.csv", header = TRUE, sep=";")
-#videos_raw <- read.csv("../002 - Data/videos.csv", header = TRUE, sep=";")
-#shares_raw <- read.csv("../002 - Data/shares.csv", header = TRUE, sep=";")
+users_raw <- read.csv("../002RawData/users.csv", header = TRUE, sep=";")
+videos_raw <- read.csv("../002RawData/videos.csv", header = TRUE, sep=";")
+#shares_raw <- read.csv("../002Data/shares.csv", header = TRUE, sep=";")
 
 #LINUX
-users_raw <- read.csv("/home/jleon/memoria/002\ -\ Data/users.csv", header = TRUE, sep=";")
-videos_raw <- read.csv("/home/jleon/memoria/002\ -\ Data/videos.csv", header = TRUE, sep=";")
-shares_raw <- read.csv("/home/jleon/memoria/002\ -\ Data/shares.csv", header = TRUE, sep=";")
+#users_raw <- read.csv("/home/jleon/memoria/002Data/users.csv", header = TRUE, sep=";")
+#videos_raw <- read.csv("/home/jleon/memoria/002Data/videos.csv", header = TRUE, sep=";")
+#shares_raw <- read.csv("/home/jleon/memoria/002Data/shares.csv", header = TRUE, sep=";")
