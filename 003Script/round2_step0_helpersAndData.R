@@ -1,6 +1,7 @@
-# HELPERS, LIBRERÃAS, Y CARGA DE DATOS
-
 # HELPERS
+
+# WIN
+setwd("C:/Users/J/Documents/GitHub/memoria")
 
 minmaxNormalization <- function(sample,min,max){
   if(is.na(sample)){
@@ -61,27 +62,27 @@ setUserShareFrequency <- function(x,y){
 }
 getUserQuality <- function(dif_last_first,share_frequency){
   if(dif_last_first==-1){
-    as.factor("No interesado/No comprendió")
+    as.factor("Not interested/Didn't get it")
   }
   else{
     if(dif_last_first==0){
-      as.factor("No capturado")
+      as.factor("Not captured")
     }
     else{
       if(share_frequency<=1){
         if(dif_last_first>=30 && dif_last_first<=60){
-          as.factor("Diario por un mes")
+          as.factor("Daily, for a month")
         }
         else{
           if(dif_last_first>=7 && dif_last_first<=29){
-            as.factor("Diario por una semana")
+            as.factor("Daily, for a week")
           }
           else{
             if(dif_last_first <=6){
-              as.factor("Perdido")
+              as.factor("Lost")
             }
             else{
-              as.factor("Diario constante")
+              as.factor("Daily, constant")
             }
           }
         }
@@ -89,19 +90,19 @@ getUserQuality <- function(dif_last_first,share_frequency){
       else{
         if(share_frequency<=7){
           if(dif_last_first>=30 && dif_last_first<=60){
-            as.factor("Semenal por un mes")
+            as.factor("Weekly, for a month")
           }
           else{
             if(dif_last_first<=29){
-              as.factor("Perdido")
+              as.factor("Lost")
             }
             else{
-              as.factor("Semanal constante")
+              as.factor("Weekly, constant")
             }
           }
         }
         else{
-          as.factor("Perdido")
+          as.factor("Lost")
         }
       }
     }
@@ -373,8 +374,8 @@ library(sqldf)
 # DATA
 
 #WIN
-users_raw <- read.csv("../002RawData/users.csv", header = TRUE, sep=";")
-videos_raw <- read.csv("../002RawData/videos.csv", header = TRUE, sep=";")
+users_raw <- read.csv("002RawData/users.csv", header = TRUE, sep=";")
+videos_raw <- read.csv("002RawData/videos.csv", header = TRUE, sep=";")
 #shares_raw <- read.csv("../002Data/shares.csv", header = TRUE, sep=";")
 
 #LINUX
