@@ -293,6 +293,15 @@ releaseDifferenceToDays <- function(x){
   }
   return(round((x/60/60/24),0))
 }
+releaseDifferenceToHours <- function(x){
+  if(x < 0 || is.na(x)){
+    x <- round(runif(1,0,30))
+  }
+  if(x == 0){
+    return(0)
+  }
+  return(round((x/60/60),0))
+}
 getAvgPpv <- function(views, points){
   if(points == 0 || views == 0){ 
     return(NA)

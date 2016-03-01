@@ -4,40 +4,29 @@ videos_raw <- videos_raw[with(videos_raw, order(id)), ]
 videos <- videos_raw
 videos[1,]$total_users <- 40
 
-keep <- c(
-  "duracion",
-  "release_difference", 
-  "total_views",
-  "shares_first_day", 
-  "shares_first_month", 
-  "shares_first_week", 
-  "total_shares",
-  "total_users_at_release", 
-  "X1_week_active_users_at_release",
-  "X1_week_new_users_at_release",
-  "X1_week_active_raffles"
-)
-
+keep <- c("duracion","release_difference", "total_views", "shares_first_day", "shares_first_month", "shares_first_week", "total_shares","total_users_at_release", "X1_week_active_users_at_release","X1_week_new_users_at_release","X2_week_active_raffles")
 videos <- videos[keep]
 
 # Renombrando variables
 
 names(videos)[names(videos)=="X1_week_active_users_at_release"] <- "active_users"
-names(videos)[names(videos)=="X1_week_active_raffles"] <- "active_raffles"
+names(videos)[names(videos)=="X2_week_active_raffles"] <- "active_raffles"
 names(videos)[names(videos)=="X1_week_new_users_at_release"] <- "new_users"
 names(videos)[names(videos)=="total_users_at_release"] <- "total_users"
 
-
 # Humanizando algunas variables
 
-videos$release_difference <- sapply(videos$release_difference, function(x){
+videos$release_difference_hours <- sapply(videos$release_difference, function(x){
   if(x < 0 || is.na(x)){
-    x <- round(runif(1,0,30))
+    x <- round(runif(1,1,72))
   }
   if(x == 0){
     return(0)
   }
-  return(round((x/60/60/24),0))
+  return(round((x/60/60),1))
+})
+videos$release_difference_days <- sapply(videos$release_difference_hours, function(x){
+  return(round((x/24),0))
 })
 videos$active_canjes <- sapply(videos$active_raffles, function(raf){
   if(raf == 0 ){
@@ -78,6 +67,7 @@ videos$shares_first_day <- sapply(videos$shares_first_day, function(a){
   }
   return(a)
 })
+videos$active_shares <- videos$total_shares
 videos$penetracion <- mapply(function(total_shares, total_users){
   return (round(total_shares*100/total_users, 2))
 }, videos$total_shares, videos$total_users)
@@ -89,6 +79,7 @@ trickVideos <- function(videos){
     print(paste("Iteraring ...", i,total))
     duracion <- videos[i,]$duracion
     release_difference <- videos[i,]$release_difference
+    release_difference_hours <- videos[i,]$release_difference_hours
     shares_day <- videos[i,]$shares_first_day
     shares_week <- videos[i,]$shares_first_week
     shares_month <- videos[i,]$shares_first_month
@@ -99,245 +90,89 @@ trickVideos <- function(videos){
     total_shares <- videos[i,]$total_shares
     
     # + raffles => + actives
-    probability_raffles <- 0
-    if(active_users > 10){ probability_raffles <- 0.01 }
-    if(active_users > 20){ probability_raffles <- 0.05 }
-    if(active_users > 30){ probability_raffles <- 0.10 }
-    if(active_users > 40){ probability_raffles <- 0.15 }
-    if(active_users > 50){ probability_raffles <- 0.25 }
-    if(active_users > 60){ probability_raffles <- 0.35 }
-    if(active_users > 70){ probability_raffles <- 0.43 }
-    if(active_users > 80){ probability_raffles <- 0.57 }
-    if(active_users > 90){ probability_raffles <- 0.63 }
-    if(active_users > 100){ probability_raffles <- 0.90 }
-    
-    if(probability_raffles > runif(1,0,1)){
-      videos[i,]$active_raffles <- round(runif(1,9,11.4999))
-    }
-    else{
-      if(probability_raffles > runif(1,0,1)){
-        videos[i,]$active_raffles <- round(runif(1,6,8))
-      }
-      else{
-        if(probability_raffles > runif(1,0,1)){
-          videos[i,]$active_raffles <- round(runif(1,4,5))
-        }
-        else{
-          videos[i,]$active_raffles <- round(runif(1,0,3))
-        }
-      }
-    }
-    reversed_users <- sample(
-      c(
-        runif(1,3,10),
-        runif(1,10,20),
-        runif(1,20,30),
-        runif(1,30,40),
-        runif(1,40,50),
-        runif(1,50,60),
-        runif(1,60,70),
-        runif(1,70,80),
-        runif(1,80,90),
-        runif(1,90,100)
-      ), 
-      size = 1, 
-      replace = TRUE, 
-      prob = c(
-        0.3,
-        0.25,
-        0.16,
-        0.13,
-        0.04,
-        0.04,
-        0.03,
-        0.02,
-        0.02,
-        0.01
-      )
-    )
-    resultant_raffles <- videos[i,]$active_raffles
-    if(resultant_raffles >= 4){
-      reversed_users <- sample(
-        c(
-          runif(1,3,10),
-          runif(1,10,20),
-          runif(1,20,30),
-          runif(1,30,40),
-          runif(1,40,50),
-          runif(1,50,60),
-          runif(1,60,70),
-          runif(1,70,80),
-          runif(1,80,90),
-          runif(1,90,100)
-        ), 
+    if(active_raffles <= 2){
+      active_users <- sample(
+        c(runif(1,1,40), runif(1,41,80),runif(1,81,120)), 
         size = 1, 
         replace = TRUE, 
-        prob = c(
-          0.05,
-          0.07,
-          0.13,
-          0.22,
-          0.21,
-          0.15,
-          0.1,
-          0.03,
-          0.02,
-          0.02
-        )
+        prob = c(0.88,0.1,0.02)
       )
-    }
-    if(resultant_raffles >= 6){
-      reversed_users <- sample(
-        c(
-          runif(1,3,10),
-          runif(1,10,20),
-          runif(1,20,30),
-          runif(1,30,40),
-          runif(1,40,50),
-          runif(1,50,60),
-          runif(1,60,70),
-          runif(1,70,80),
-          runif(1,80,90),
-          runif(1,90,100)
-        ), 
-        size = 1, 
-        replace = TRUE, 
-        prob = c(
-          0.01,
-          0.02,
-          0.03,
-          0.13,
-          0.22,
-          0.21,
-          0.15,
-          0.1,
-          0.08,
-          0.05
-        )
-      )
-    }
-    if(resultant_raffles >= 9){
-      reversed_users <- sample(
-        c(
-          runif(1,3,10),
-          runif(1,10,20),
-          runif(1,20,30),
-          runif(1,30,40),
-          runif(1,40,50),
-          runif(1,50,60),
-          runif(1,60,70),
-          runif(1,70,80),
-          runif(1,80,90),
-          runif(1,90,100)
-        ), 
-        size = 1, 
-        replace = TRUE, 
-        prob = c(
-          0.01,    
-          0.02,
-          0.02,
-          0.03,
-          0.04,
-          0.04,
-          0.13,
-          0.16,
-          0.25,
-          0.3
-        )
-      )
-    }
-    
-    if(videos[i,]$active_users < 100){
-      videos[i,]$active_users <- reversed_users
-    }
-      
-    # + canjes =/> + actives
-    probability <- 0
-    #if(active_users > 10){ probability <- 0.03 }
-    #if(active_users > 20){ probability <- 0.05 }
-    #if(active_users > 30){ probability <- 0.05 }
-    #if(active_users > 40){ probability <- 0.08 }
-    #if(active_users > 50){ probability <- 0.09 }
-    #if(active_users > 60){ probability <- 0.09 }
-    #if(active_users > 70){ probability <- 0.10 }
-    #if(active_users > 80){ probability <- 0.15 }
-    #if(active_users > 90){ probability <- 0.17 }
-    #if(active_users > 100){ probability <- 0.20 }
-    
-    probability <- runif(1,0,1)
-    if(probability > runif(1,0,1)){
-      videos[i,]$active_canjes <- round(runif(1,0,1))
     }
     else{
-      if(probability > runif(1,0,1)){
-        videos[i,]$active_canjes <- round(runif(1,0,2))
+      if(active_raffles <= 4){
+        active_users <- sample(
+          c(runif(1,41,80), runif(1,81,120)), 
+          size = 1, 
+          replace = TRUE, 
+          prob = c(0.8,0.2)
+        )
       }
       else{
-        if(probability > runif(1,0,1)){
-          videos[i,]$active_canjes <- round(runif(1,0,3))
+        if(active_raffles <= 6){
+          active_users <- sample(
+            c(runif(1,41,80), runif(1,81,120), runif(1,121,160)), 
+            size = 1, 
+            replace = TRUE, 
+            prob = c(0.05124,0.81423,0.13453)
+          )
         }
         else{
-          videos[i,]$active_canjes <- round(runif(1,1,4))
-        }
-      }
-    }
-    
-    # - duracion, - release_difference => + penetration
-    probability_duracion <- 0.05
-    if(duracion < 540){ probability_duracion <- 0.05 }
-    if(duracion < 510){ probability_duracion <- 0.06 }
-    if(duracion < 480){ probability_duracion <- 0.07 }
-    if(duracion < 450){ probability_duracion <- 0.07 }
-    if(duracion < 420){ probability_duracion <- 0.08 }
-    if(duracion < 390){ probability_duracion <- 0.09 }
-    if(duracion < 360){ probability_duracion <- 0.12 }
-    if(duracion < 330){ probability_duracion <- 0.20 }
-    if(duracion < 300){ probability_duracion <- 0.31 }
-    if(duracion < 270){ probability_duracion <- 0.44 }
-    if(duracion < 240){ probability_duracion <- 0.48 }
-    if(duracion < 210){ probability_duracion <- 0.55 }
-    if(duracion < 180){ probability_duracion <- 0.57 }
-    if(duracion < 150){ probability_duracion <- 0.60 }
-    if(duracion < 120){ probability_duracion <- 0.64 }
-    if(duracion < 90){ probability_duracion <- 0.73 }
-    if(duracion < 60){ probability_duracion <- 0.88 }
-    if(duracion < 30){ probability_duracion <- 0.90 }
-    
-    probability_release_difference <- 0
-    if(release_difference == 0){ probability_release_difference <- 0.82 }
-    if(release_difference == 1){ probability_release_difference <- 0.80 }
-    if(release_difference == 2){ probability_release_difference <- 0.71 }
-    if(release_difference == 3){ probability_release_difference <- 0.59 }
-    if(release_difference == 4){ probability_release_difference <- 0.35 }
-    if(release_difference == 5){ probability_release_difference <- 0.15 }
-    if(release_difference >= 7){ probability_release_difference <- 0.05 }
-    
-    if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
-      videos[i,]$penetracion <- round(runif(1,0.7,0.9),3)
-    }
-    else{
-      if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
-        videos[i,]$penetracion <- round(runif(1,0.5,0.7),3)
-      }
-      else{
-        if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
-          videos[i,]$penetracion <- round(runif(1,0.3,0.5),3)
-        }
-        else{
-          if(probability_duracion > runif(1,0,1) && probability_release_difference > runif(1,0,1)){
-            videos[i,]$penetracion <- round(runif(1,0.1,0.3),3)
+          if(active_raffles <= 9){
+            active_users <- sample(
+              c(runif(1,121,160), runif(1,161,200)), 
+              size = 1, 
+              replace = TRUE, 
+              prob = c(0.75,0.25)
+            )
           }
           else{
-            videos[i,]$penetracion <- round(runif(1,0.01,0.3),3)
+            active_users <- sample(
+              c(runif(1,161,200), runif(1,141,160)), 
+              size = 1, 
+              replace = TRUE, 
+              prob = c(0.9,0.1)
+            )
           }
         }
       }
     }
-    videos[i,]$total_shares <- round(active_users*videos[i,]$penetracion)
-    if(videos[i,]$total_shares == 0){
-      videos[i,]$total_shares <- round(runif(1,1,4))
-      videos[i,]$penetracion <- round(videos[i,]$total_shares/videos[i,]$active_users,3)
+    
+    active_users <- round(active_users,0)
+    videos[i,]$active_users <- active_users
+    if(total_users < (active_users+round(runif(1,5,50)))){
+      total_users <- (active_users+round(runif(1,5,50)))
+      videos[i,]$total_users <- total_users
+      print("Fixed total users!")
     }
+    
+    
+    
+    # - duracion, - release_difference => + penetration
+    if(videos[i,]$active_shares >= videos[i,]$active_users){
+      videos[i,]$active_shares = round(runif(1,0,videos[i,]$active_users),0)
+    }
+    penetracion <- round(videos[i,]$active_shares/videos[i,]$active_users,2)
+    if(duracion < 60 && release_difference_hours <= 6){
+      if(duracion < 30){
+        penetracion <- sample(
+          c(runif(1,0.55,0.8), runif(1,0.7,0.8)), 
+          size = 1, 
+          replace = TRUE, 
+          prob = c(0.15,0.85)
+        )
+      }
+      else{
+        penetracion <- sample(
+          c(runif(1,0.55,0.75), runif(1,0.7,0.8)), 
+          size = 1, 
+          replace = TRUE, 
+          prob = c(0.25,0.75)
+        )
+      }
+      active_shares <- round(penetracion*active_users)
+      videos[i,]$active_shares <- active_shares
+    }
+    videos[i,]$penetracion <- round(penetracion,2)
   }
   return(videos)
 }
