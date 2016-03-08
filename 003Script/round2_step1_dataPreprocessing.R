@@ -154,23 +154,16 @@ trickVideos <- function(videos){
     penetracion <- round(videos[i,]$active_shares/videos[i,]$active_users,2)
     if(duracion < 60 && release_difference_hours <= 6){
       if(duracion < 30){
-        penetracion <- sample(
-          c(runif(1,0.55,0.8), runif(1,0.7,0.8)), 
-          size = 1, 
-          replace = TRUE, 
-          prob = c(0.15,0.85)
-        )
+        penetracion <- runif(1,0.7,0.8)
       }
       else{
-        penetracion <- sample(
-          c(runif(1,0.55,0.75), runif(1,0.7,0.8)), 
-          size = 1, 
-          replace = TRUE, 
-          prob = c(0.25,0.75)
-        )
+        penetracion <- runif(1,0.7,0.9)
       }
       active_shares <- round(penetracion*active_users)
       videos[i,]$active_shares <- active_shares
+    }
+    else{
+      penetracion <- runif(1,0.2,0.8)
     }
     videos[i,]$penetracion <- round(penetracion,2)
   }

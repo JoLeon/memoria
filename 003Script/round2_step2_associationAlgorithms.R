@@ -4,7 +4,7 @@ setwd("C:/Users/J/Documents/GitHub/memoria")
 users_processed <- read.csv("002ProcessedData/users.csv", header = TRUE, sep=";")
 videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep=";")
 
-# Funciones
+# VIDEOS
 
 disRaffles <- function(raffles){
   if(raffles >= 10){
@@ -79,25 +79,87 @@ videos_discrete$duracion                      <- sapply(videos$duracion, disDura
 videos_discrete$release_difference_hours      <- sapply(videos$release_difference_hours, disRelease)
 videos_discrete$penetracion                   <- sapply(videos$penetracion, disPenetracion)
 
-videos_test <- videos_discrete[c(
+videos_relation_1 <- videos_discrete[c(
   "active_raffles",
   "active_users"
 )]
 
-videos_test <- videos_discrete[c(
+videos_relation_2<- videos_discrete[c(
   "duracion",
   "release_difference_hours",
   "penetracion"
 )]
 
 apriori_videos_appereance_list = list(lhs = c("active_raffles=10 o más", "active_raffles=Entre 7 y 9", "active_raffles=Entre 5 y 6", "active_raffles=Entre 3 y 4", "active_raffles=2 o menos"),default = "rhs")
-res <- apriori(videos_test, parameter =list(support=0.04,confidence=0.4), appearance = apriori_videos_appereance_list)
-inspect(res)
+apriori_relation_1 <- apriori(videos_relation_1, parameter =list(support=0.04,confidence=0.4), appearance = apriori_videos_appereance_list)
+inspect(apriori_relation_1)
 
-# JUNTAR PRIEMROS 2 RANGOS DE DURACION?
+apriori_videos_appereance_list = list(
+  lhs = c(
+    "duracion=30s o menos",
+    "duracion=(30, 60]",
+    "duracion=(60, 120]",
+    "duracion=(120, 180]",
+    "duracion=(180, 240]",
+    "duracion=(240, 300]",
+    "duracion=(300, 600]",
+    "duracion=600 o más",
+    "release_difference_hours=[0, 6]",
+    "release_difference_hours=Entre 6 horas y 1 día",
+    "release_difference_hours=Entre 1 y 3 días",
+    "release_difference_hours=Entre 3 días y 1 semana",
+    "release_difference_hours=Entre 1 y 2 semanas"
+  ),
+  default = "rhs"
+)
+apriori_relation_2 <- apriori(videos_relation_2, parameter =list(support=0.01,confidence=0.4), appearance = apriori_videos_appereance_list)
+inspect(apriori_relation_2)
 
-res <- apriori(videos_test, parameter =list(support=0.001,confidence=0.4))
-inspect(res)
-sqldf("SELECT * FROM videos_test WHERE active_raffles = '10 o más'")
+#USUARIOS
 
-sqldf("SELECT active_users FROM videos_processed WHERE active_raffles >= 9 AND active_users < 100")
+users_relations <- users[c("quality", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos","densidad_videos_semanas_registro")]
+
+apriori_users_appeareance_list = list(
+  rhs = c(
+    "quality=Not interested/Didn't get it",
+    "quality=Not captured",
+    "quality=Lost"
+  ),
+  default = "lhs"
+)
+apriori_relation_3 <- apriori(users_relations, parameter =list(support=0.1,confidence=0.5), appearance = apriori_users_appeareance_list)
+inspect(apriori_relation_3)
+
+apriori_users_appeareance_list = list(
+  rhs = c(
+    "quality=Daily, for a month",
+    "quality=Daily, for a week",
+    "quality=Daily, constant",
+    "quality=Weekly, for a month",
+    "quality=Weekly, constant"
+    
+  ),
+  default = "lhs"
+)
+apriori_relation_4 <- apriori(users_relations, parameter =list(support=0.005,confidence=0.1), appearance = apriori_users_appeareance_list)
+inspect(apriori_relation_4)
+
+simplified_user_relations <- users_relations
+simplified_user_relations$good_user <- sapply(users_relations$quality,function(q){
+  if(q == "Not interested/Didn't get it" || q == "Not captured" || q == "Lost"){
+    return(as.factor(0))
+  }
+  return(as.factor(1))
+})
+simplified_user_relations <- simplified_user_relations[c("good_user", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos","densidad_videos_semanas_registro")]
+apriori_users_appeareance_list = list(
+  rhs = c(
+    "good_user=1"
+    
+  ),
+  default = "lhs"
+)
+apriori_relation_5 <- apriori(simplified_user_relations, parameter =list(support=0.01,confidence=0.3), appearance = apriori_users_appeareance_list)
+inspect(apriori_relation_5)
+
+
