@@ -4,6 +4,25 @@ setwd("C:/Users/J/Documents/GitHub/memoria")
 users_processed <- read.csv("002ProcessedData/users.csv", header = TRUE, sep=";")
 videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep=";")
 
+# Discretizing
+
+users_discrete <- users_processed[c("puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "edad", "quality", "sistema_registro", "densidad_videos_semanas_registro", "calidad_videos", "densidad_concursos")]
+users_discrete$puntos_historicos <- discretize(users_discrete$puntos_historicos, method="cluster", categories=5)
+users_discrete$shares_totales <- discretize(users_discrete$shares_totales, method="cluster", categories=5)
+users_discrete$concursos_participados <- discretize(users_discrete$concursos_participados, method="cluster", categories=5)
+users_discrete$edad <- discretize(users_discrete$edad, method="cluster", categories=5)
+users_discrete$recruitments <- sapply(users_discrete$recruitments, function(rec){
+  if(rec >0){
+    return(as.factor(1)) 
+  } 
+  return(as.factor((0)))
+})
+users_discrete$genero <- sapply(users_discrete$genero, function(g){
+  if(is.null(g) || is.na(g)){
+    return(as.factor(sample(c("M","F"), size = 1, replace = TRUE, prob = c(0.5,0.5))))
+  }
+  return(as.factor(g))
+})
 # VIDEOS
 
 disRaffles <- function(raffles){
@@ -72,12 +91,12 @@ disPenetracion <- function(penetracion){
   if(penetracion >= 0.1){ return(as.factor("Entre 10% y 20%"))}
   return(as.factor("Menos del 10%"))
 }
-videos_discrete <- videos
-videos_discrete$active_users                  <- sapply(videos$active_users, disActiveUsers)
-videos_discrete$active_raffles                <- sapply(videos$active_raffles, disRaffles)
-videos_discrete$duracion                      <- sapply(videos$duracion, disDuracion)
-videos_discrete$release_difference_hours      <- sapply(videos$release_difference_hours, disRelease)
-videos_discrete$penetracion                   <- sapply(videos$penetracion, disPenetracion)
+videos_discrete <- videos_processed
+videos_discrete$active_users                  <- sapply(videos_processed$active_users, disActiveUsers)
+videos_discrete$active_raffles                <- sapply(videos_processed$active_raffles, disRaffles)
+videos_discrete$duracion                      <- sapply(videos_processed$duracion, disDuracion)
+videos_discrete$release_difference_hours      <- sapply(videos_processed$release_difference_hours, disRelease)
+videos_discrete$penetracion                   <- sapply(videos_processed$penetracion, disPenetracion)
 
 videos_relation_1 <- videos_discrete[c(
   "active_raffles",
@@ -91,8 +110,8 @@ videos_relation_2<- videos_discrete[c(
 )]
 
 apriori_videos_appereance_list = list(lhs = c("active_raffles=10 o más", "active_raffles=Entre 7 y 9", "active_raffles=Entre 5 y 6", "active_raffles=Entre 3 y 4", "active_raffles=2 o menos"),default = "rhs")
-apriori_relation_1 <- apriori(videos_relation_1, parameter =list(support=0.04,confidence=0.4), appearance = apriori_videos_appereance_list)
-inspect(apriori_relation_1)
+apriori_relation_test <- apriori(videos_discrete, parameter =list(support=0.1,confidence=0.4))
+
 
 apriori_videos_appereance_list = list(
   lhs = c(
@@ -112,12 +131,12 @@ apriori_videos_appereance_list = list(
   ),
   default = "rhs"
 )
-apriori_relation_2 <- apriori(videos_relation_2, parameter =list(support=0.01,confidence=0.4), appearance = apriori_videos_appereance_list)
-inspect(apriori_relation_2)
+apriori_relation_2 <- apriori(videos_relation_2, parameter =list(support=0.005,confidence=0.4), appearance = apriori_videos_appereance_list)
+
 
 #USUARIOS
 
-users_relations <- users[c("quality", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos","densidad_videos_semanas_registro")]
+users_relations <- users_processed[c("quality", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos","densidad_videos_semanas_registro")]
 
 apriori_users_appeareance_list = list(
   rhs = c(
@@ -128,7 +147,6 @@ apriori_users_appeareance_list = list(
   default = "lhs"
 )
 apriori_relation_3 <- apriori(users_relations, parameter =list(support=0.1,confidence=0.5), appearance = apriori_users_appeareance_list)
-inspect(apriori_relation_3)
 
 apriori_users_appeareance_list = list(
   rhs = c(
@@ -142,7 +160,7 @@ apriori_users_appeareance_list = list(
   default = "lhs"
 )
 apriori_relation_4 <- apriori(users_relations, parameter =list(support=0.005,confidence=0.1), appearance = apriori_users_appeareance_list)
-inspect(apriori_relation_4)
+
 
 simplified_user_relations <- users_relations
 simplified_user_relations$good_user <- sapply(users_relations$quality,function(q){
@@ -160,6 +178,83 @@ apriori_users_appeareance_list = list(
   default = "lhs"
 )
 apriori_relation_5 <- apriori(simplified_user_relations, parameter =list(support=0.01,confidence=0.3), appearance = apriori_users_appeareance_list)
-inspect(apriori_relation_5)
 
+apriori_users_appeareance_list = list(
+  rhs = c(
+    "good_user=0"
+    
+  ),
+  default = "lhs"
+)
+apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support=0.2,confidence=0.3), appearance = apriori_users_appeareance_list)
 
+# RELACIONES INTERESANTES
+  # submuestrar - sobremuestrar
+  # Utilizar herramientas de clasificacion
+  # Usar árboles y naive bayes? confusion matrix? prediciton (pasarle arbol) y performance
+
+  # Active raffles vs active users
+  
+    inspect(apriori_relation_1)
+    # El soporte es pequeño porque la cantidad de datos "de interés" es pequeña
+    observaciones <- sqldf("SELECT count(*) as total FROM videos");
+    videos_mas_160_actives <- sqldf("SELECT count(*) as total FROM videos WHERE active_users > 160")
+    
+    observaciones$total
+    videos_mas_160_actives$total
+    
+    videos_mas_160_actives$total/observaciones$total
+    
+    # Aproximadamente un 11% de los datos tienen más de 160 usuarios activos al momento del lanzamiento
+
+  # Duración y release difference vs penetración
+    
+    inspect(apriori_relation_2)
+    
+    # Rangos pequeños de confianza, justamente por la baja cantidad de casos de "éxito" contra casos totales
+    
+  # Relaciones entre caldiades usuarias negativas
+    
+    # Objetivo: qué variables influyen más en un usuario de calidad negativa? (perdido, no capturado, no interesado/no entendió)
+    # No interesado, no entendió: No compartió nada jamás (Sólo registro)
+    # No capturado: Interectuó con la plataforma un único día
+    # Perdido: Interactuó con la plataforma pormenos de una semana
+    
+    # Densidad concursos:
+      # Low               1 - 2
+      # Somewhat Low      3 - 4
+      # Regular           5 - 6
+      # Somewhat high     7 - 8
+      # High              9 o más
+    
+    # Densidad videos:
+      # Low               1 - 3
+      # Somewhat Low      4 - 5
+      # Regular           6 - 7
+      # Somewhat high     8 - 9
+      # High              10 o más
+    
+    # Calidad videos:
+      # Low               p < 20%
+      # Somewhat Low      20% <= p < 40%
+      # Regular           40% <= p < 60%
+      # Somewhat high     50% <= p < 80%
+      # High              60% <= p >= 80%
+    
+    inspect(apriori_relation_3)
+  
+  # Relaciones entre calidades usuarias positivas
+    
+    inspect(apriori_relation_4)
+    
+  # Relaciones calidad positiva agrupada vs resto
+    
+    inspect(apriori_relation_5)
+  
+  # Relaciones calidad negativa agrupada vs resto 
+    
+    inspect(apriori_relation_6)
+  
+# Todo junto?
+  all_rules <- apriori(users_discrete, parameter =list(support=0.1,confidence=0.7,target="rules"))
+  inspect(sort(all_rules, decreasing= FALSE, by ="lift"))
