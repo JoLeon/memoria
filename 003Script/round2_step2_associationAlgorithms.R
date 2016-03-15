@@ -4,6 +4,11 @@ setwd("C:/Users/J/Documents/GitHub/memoria")
 users_processed <- read.csv("002ProcessedData/users.csv", header = TRUE, sep=";")
 videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep=";")
 
+# UBUNTU
+
+users_processed <- read.csv("/home/jleon/memoria/002ProcessedData/users.csv", header = TRUE, sep=";")
+videos_processed <- read.csv("/home/jleon/memoria/002ProcessedData/videos.csv", header = TRUE, sep=";")
+
 # Discretizing
 
 users_discrete <- users_processed[c("puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "edad", "quality", "sistema_registro", "densidad_videos_semanas_registro", "calidad_videos", "densidad_concursos")]
@@ -27,7 +32,7 @@ users_discrete$genero <- sapply(users_discrete$genero, function(g){
 
 disRaffles <- function(raffles){
   if(raffles >= 10){
-    return(as.factor("10 o más"))
+    return(as.factor("10 o m?s"))
   }
   if(raffles >= 7){
     return(as.factor("Entre 7 y 9"))
@@ -41,7 +46,7 @@ disRaffles <- function(raffles){
   return(as.factor("2 o menos"))
 }
 disActiveUsers <- function(users){
-  if(users > 160){ return(as.factor("Más de 160"))}
+  if(users > 160){ return(as.factor("M?s de 160"))}
   if(users > 120){ return(as.factor("(120, 160]"))}
   if(users > 80){ return(as.factor("(80, 120]"))}
   if(users > 40){ return(as.factor("(40, 80]"))}
@@ -69,18 +74,18 @@ disDuracion <- function(duracion){
   if(duracion < 600){
     return(as.factor("(300, 600]"))
   }
-  return(as.factor("600 o más"))
+  return(as.factor("600 o m?s"))
 }
 disRelease <- function(difference){
   if(difference <= 6){ return(as.factor("[0, 6]"))}
-  if(difference <= 24){ return(as.factor("Entre 6 horas y 1 día"))}
-  if(difference <= 72){ return(as.factor("Entre 1 y 3 días"))}
-  if(difference <= 168){ return(as.factor("Entre 3 días y 1 semana"))}
+  if(difference <= 24){ return(as.factor("Entre 6 horas y 1 d?a"))}
+  if(difference <= 72){ return(as.factor("Entre 1 y 3 d?as"))}
+  if(difference <= 168){ return(as.factor("Entre 3 d?as y 1 semana"))}
   if(difference <= 372){ return(as.factor("Entre 1 y 2 semanas"))}
-  return(as.factor("Más de 2 semanas"))
+  return(as.factor("M?s de 2 semanas"))
 }
 disPenetracion <- function(penetracion){
-  if(penetracion > 0.9){ return(as.factor("Más del 90%"))}
+  if(penetracion > 0.9){ return(as.factor("M?s del 90%"))}
   if(penetracion >= 0.8){ return(as.factor("Entre 80% y 90%"))}
   if(penetracion >= 0.7){ return(as.factor("Entre 70% y 80%"))}
   if(penetracion >= 0.6){ return(as.factor("Entre 60% y 70%"))}
@@ -109,7 +114,7 @@ videos_relation_2<- videos_discrete[c(
   "penetracion"
 )]
 
-apriori_videos_appereance_list = list(lhs = c("active_raffles=10 o más", "active_raffles=Entre 7 y 9", "active_raffles=Entre 5 y 6", "active_raffles=Entre 3 y 4", "active_raffles=2 o menos"),default = "rhs")
+apriori_videos_appereance_list = list(lhs = c("active_raffles=10 o m?s", "active_raffles=Entre 7 y 9", "active_raffles=Entre 5 y 6", "active_raffles=Entre 3 y 4", "active_raffles=2 o menos"),default = "rhs")
 apriori_relation_test <- apriori(videos_discrete, parameter =list(support=0.1,confidence=0.4))
 
 
@@ -122,11 +127,11 @@ apriori_videos_appereance_list = list(
     "duracion=(180, 240]",
     "duracion=(240, 300]",
     "duracion=(300, 600]",
-    "duracion=600 o más",
+    "duracion=600 o m?s",
     "release_difference_hours=[0, 6]",
-    "release_difference_hours=Entre 6 horas y 1 día",
-    "release_difference_hours=Entre 1 y 3 días",
-    "release_difference_hours=Entre 3 días y 1 semana",
+    "release_difference_hours=Entre 6 horas y 1 d?a",
+    "release_difference_hours=Entre 1 y 3 d?as",
+    "release_difference_hours=Entre 3 d?as y 1 semana",
     "release_difference_hours=Entre 1 y 2 semanas"
   ),
   default = "rhs"
@@ -191,12 +196,12 @@ apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support
 # RELACIONES INTERESANTES
   # submuestrar - sobremuestrar
   # Utilizar herramientas de clasificacion
-  # Usar árboles y naive bayes? confusion matrix? prediciton (pasarle arbol) y performance
+  # Usar ?rboles y naive bayes? confusion matrix? prediciton (pasarle arbol) y performance
 
   # Active raffles vs active users
   
     inspect(apriori_relation_1)
-    # El soporte es pequeño porque la cantidad de datos "de interés" es pequeña
+    # El soporte es peque?o porque la cantidad de datos "de inter?s" es peque?a
     observaciones <- sqldf("SELECT count(*) as total FROM videos");
     videos_mas_160_actives <- sqldf("SELECT count(*) as total FROM videos WHERE active_users > 160")
     
@@ -205,34 +210,34 @@ apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support
     
     videos_mas_160_actives$total/observaciones$total
     
-    # Aproximadamente un 11% de los datos tienen más de 160 usuarios activos al momento del lanzamiento
+    # Aproximadamente un 11% de los datos tienen m?s de 160 usuarios activos al momento del lanzamiento
 
-  # Duración y release difference vs penetración
+  # Duraci?n y release difference vs penetraci?n
     
     inspect(apriori_relation_2)
     
-    # Rangos pequeños de confianza, justamente por la baja cantidad de casos de "éxito" contra casos totales
+    # Rangos peque?os de confianza, justamente por la baja cantidad de casos de "?xito" contra casos totales
     
   # Relaciones entre caldiades usuarias negativas
     
-    # Objetivo: qué variables influyen más en un usuario de calidad negativa? (perdido, no capturado, no interesado/no entendió)
-    # No interesado, no entendió: No compartió nada jamás (Sólo registro)
-    # No capturado: Interectuó con la plataforma un único día
-    # Perdido: Interactuó con la plataforma pormenos de una semana
+    # Objetivo: qu? variables influyen m?s en un usuario de calidad negativa? (perdido, no capturado, no interesado/no entendi?)
+    # No interesado, no entendi?: No comparti? nada jam?s (S?lo registro)
+    # No capturado: Interectu? con la plataforma un ?nico d?a
+    # Perdido: Interactu? con la plataforma pormenos de una semana
     
     # Densidad concursos:
       # Low               1 - 2
       # Somewhat Low      3 - 4
       # Regular           5 - 6
       # Somewhat high     7 - 8
-      # High              9 o más
+      # High              9 o m?s
     
     # Densidad videos:
       # Low               1 - 3
       # Somewhat Low      4 - 5
       # Regular           6 - 7
       # Somewhat high     8 - 9
-      # High              10 o más
+      # High              10 o m?s
     
     # Calidad videos:
       # Low               p < 20%
@@ -256,5 +261,6 @@ apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support
     inspect(apriori_relation_6)
   
 # Todo junto?
-  all_rules <- apriori(users_discrete, parameter =list(support=0.1,confidence=0.7,target="rules"))
+  all_rules <- apriori(users_discrete, parameter =list(support=0.2,confidence=0.7,target="rules"))
   inspect(sort(all_rules, decreasing= FALSE, by ="lift"))
+  

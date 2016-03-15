@@ -113,7 +113,7 @@ trickVideos <- function(videos){
             c(runif(1,41,80), runif(1,81,120), runif(1,121,160)), 
             size = 1, 
             replace = TRUE, 
-            prob = c(0.05124,0.81423,0.13453)
+            prob = c(0.15124,0.81423,0.03453)
           )
         }
         else{
@@ -171,7 +171,11 @@ trickVideos <- function(videos){
 }
 
 videos <- trickVideos(videos)
+
+# WIN
 write.table(videos,file="002ProcessedData/videos.csv", quote=FALSE, sep=";", row.names=FALSE, eol="\n")
+# UBUNTU
+write.table(videos,file="/home/jleon/memoria/002ProcessedData/videos.csv", quote=FALSE, sep=";", row.names=FALSE, eol="\n")
 
 sqldf("select count(*) from videos WHERE duracion <= 400")
 
@@ -926,4 +930,7 @@ trickUsers <- function(users){
 }
 
 users <- trickUsers(users)
+# WIN
 write.table(users,file="002ProcessedData/users.csv", quote=FALSE, sep=";", row.names=FALSE)
+# UBUNTU
+write.table(users,file="/home/jleon/memoria/002ProcessedData/users.csv", quote=FALSE, sep=";", row.names=FALSE)
