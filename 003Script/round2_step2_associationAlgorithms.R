@@ -11,7 +11,7 @@ videos_processed <- read.csv("/home/jleon/memoria/002ProcessedData/videos.csv", 
 
 # Discretizing
 
-users_discrete <- users_processed[c("puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "edad", "quality", "sistema_registro", "densidad_videos_semanas_registro", "calidad_videos", "densidad_concursos")]
+users_discrete <- users_processed[c("puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "edad", "quality", "sistema_registro", "calidad_videos", "densidad_concursos")]
 users_discrete$puntos_historicos <- discretize(users_discrete$puntos_historicos, method="cluster", categories=5)
 users_discrete$shares_totales <- discretize(users_discrete$shares_totales, method="cluster", categories=5)
 users_discrete$concursos_participados <- discretize(users_discrete$concursos_participados, method="cluster", categories=5)
@@ -141,7 +141,7 @@ apriori_relation_2 <- apriori(videos_relation_2, parameter =list(support=0.005,c
 
 #USUARIOS
 
-users_relations <- users_processed[c("quality", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos","densidad_videos_semanas_registro")]
+users_relations <- users_processed[c("quality", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos")]
 
 apriori_users_appeareance_list = list(
   rhs = c(
@@ -174,7 +174,7 @@ simplified_user_relations$good_user <- sapply(users_relations$quality,function(q
   }
   return(as.factor(1))
 })
-simplified_user_relations <- simplified_user_relations[c("good_user", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos","densidad_videos_semanas_registro")]
+simplified_user_relations <- simplified_user_relations[c("good_user", "sistema_registro","densidad_videos","calidad_videos","densidad_concursos")]
 apriori_users_appeareance_list = list(
   rhs = c(
     "good_user=1"

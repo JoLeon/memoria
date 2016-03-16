@@ -242,14 +242,6 @@ trickUsers <- function(users){
       prob = c(0.3, 0.1, 0.25, 0.1, 0.2, 0.05)
     )
   )
-  users$densidad_videos <- as.factor(
-    sample(
-      c("Low", "Somewhat Low", "Regular", "Somewhat High", "High"), 
-      size = total, 
-      replace = TRUE, 
-      prob = c(0.25, 0.15, 0.15, 0.2, 0.25)
-    )
-  )
   users$calidad_videos <- as.factor(
     sample(
       c("Low", "Somewhat Low", "Regular", "Somewhat High", "High"), 
@@ -266,7 +258,7 @@ trickUsers <- function(users){
       prob = c(0.25, 0.3, 0.10, 0.15, 0.2)
     )
   )
-  users$densidad_videos_semanas_registro <- as.factor(
+  users$densidad_videos <- as.factor(
     sample(
       c("Low", "Somewhat Low", "Regular", "Somewhat High", "High"), 
       size = total, 
@@ -538,7 +530,7 @@ trickUsers <- function(users){
         v <- as.factor("Low")
       }
       if(densidad != ""){
-        users[i,]$densidad_videos_semanas_registro <- densidad
+    users[i,]$densidad_videos <- densidad
       }
     }
     if(quality_id == 4){ #Diario por una semana
@@ -634,7 +626,7 @@ trickUsers <- function(users){
         v <- as.factor("Low")
       }
       if(densidad != ""){
-        users[i,]$densidad_videos_semanas_registro <- densidad
+        users[i,]$densidad_videos <- densidad
       }
     }
     if(quality_id == 5){ #Diario constante
@@ -730,7 +722,7 @@ trickUsers <- function(users){
         v <- as.factor("Low")
       }
       if(densidad != ""){
-        users[i,]$densidad_videos_semanas_registro <- densidad
+        users[i,]$densidad_videos <- densidad
       }
     }
     if(quality_id == 6){ #Semanal por un mes
@@ -826,7 +818,7 @@ trickUsers <- function(users){
         v <- as.factor("Low")
       }
       if(densidad != ""){
-        users[i,]$densidad_videos_semanas_registro <- densidad
+        users[i,]$densidad_videos <- densidad
       }
     }
     if(quality_id == 7){ #Semanal constante
@@ -922,7 +914,7 @@ trickUsers <- function(users){
         v <- as.factor("Low")
       }
       if(densidad != ""){
-        users[i,]$densidad_videos_semanas_registro <- densidad
+        users[i,]$densidad_videos <- densidad
       }
     }
   }
