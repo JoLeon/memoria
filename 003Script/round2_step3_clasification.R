@@ -102,6 +102,9 @@
       }
       return(as.factor(genero))
     })
+    
+    # Quality
+    
     users_quality <- users_processed[c(
       "puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "premios_canjeados", 
       "edad", "quality", "sistema_registro", "densidad_videos", "calidad_videos", "densidad_concursos" 
@@ -384,3 +387,135 @@
       users_quality <- rbind(users_quality,random_row)
     }
     
+    # Good/Bad quality
+    
+    users_good_bad <- users_processed[c(
+      "puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "premios_canjeados", 
+      "edad", "quality", "sistema_registro", "densidad_videos", "calidad_videos", "densidad_concursos" 
+    )]
+    
+    users_good_bad$good_user <- sapply(users_processed$quality,function(q){
+      if(q == "Not interested/Didn't get it" || q == "Not captured" || q == "Lost"){
+        return(as.factor(0))
+      }
+      return(as.factor(1))
+    })
+    
+    users_good_bad <- users_good_bad[c(
+      "puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "premios_canjeados", 
+      "edad", "sistema_registro", "densidad_videos", "calidad_videos", "densidad_concursos", "good_user" 
+    )]
+    
+    users_good_bad_remaining <- 2385
+    users_good_bad_success_group <- sqldf("SELECT * FROM users_good_bad WHERE good_user = 1")
+    genero <- sqldf("SELECT DISTINCT(genero) FROM users_good_bad_success_group")
+    puntos_historicos <- sqldf("SELECT DISTINCT(puntos_historicos) FROM users_good_bad_success_group")
+    dia_afiliacion <- sqldf("SELECT DISTINCT(dia_afiliacion) FROM users_good_bad_success_group")
+    shares_totales <- sqldf("SELECT DISTINCT(shares_totales) FROM users_good_bad_success_group")
+    recruitments <- sqldf("SELECT DISTINCT(recruitments) FROM users_good_bad_success_group")
+    concursos_participados <- sqldf("SELECT DISTINCT(concursos_participados) FROM users_good_bad_success_group")
+    premios_canjeados <- sqldf("SELECT DISTINCT(premios_canjeados) FROM users_good_bad_success_group")
+    edad <- sqldf("SELECT DISTINCT(edad) FROM users_good_bad_success_group")
+    sistema_registro <- sqldf("SELECT DISTINCT(sistema_registro) FROM users_good_bad_success_group")
+    densidad_videos <- sqldf("SELECT DISTINCT(densidad_videos) FROM users_good_bad_success_group")
+    calidad_videos <- sqldf("SELECT DISTINCT(calidad_videos) FROM users_good_bad_success_group")
+    densidad_concursos <- sqldf("SELECT DISTINCT(densidad_concursos) FROM users_good_bad_success_group")
+    densidad_videos <- sqldf("SELECT DISTINCT(densidad_videos) FROM users_good_bad_success_group")
+    
+    
+    for (i in (1:users_good_bad_remaining)){
+      print(paste("Iteraring ...", i,users_good_bad_remaining))
+      random_row <- list(
+        as.integer(puntos_historicos$puntos_historicos[round(runif(1,1,length(puntos_historicos$puntos_historicos)))]),
+        as.factor(genero$genero[round(runif(1,1,length(genero$genero)))]),
+        as.factor(dia_afiliacion$dia_afiliacion[round(runif(1,1,length(dia_afiliacion$dia_afiliacion)))]),
+        as.integer(shares_totales$shares_totales[round(runif(1,1,length(shares_totales$shares_totales)))]),
+        as.integer(recruitments$recruitments[round(runif(1,1,length(recruitments$recruitments)))]),
+        as.integer(concursos_participados$concursos_participados[round(runif(1,1,length(concursos_participados$concursos_participados)))]),
+        as.integer(premios_canjeados$premios_canjeados[round(runif(1,1,length(premios_canjeados$premios_canjeados)))]),
+        as.integer(edad$edad[round(runif(1,1,length(edad$edad)))]),
+        as.factor(sistema_registro$sistema_registro[round(runif(1,1,length(sistema_registro$sistema_registro)))]),
+        as.factor(densidad_videos$densidad_videos[round(runif(1,1,length(densidad_videos$densidad_videos)))]),
+        as.factor(calidad_videos$calidad_videos[round(runif(1,1,length(calidad_videos$calidad_videos)))]),
+        as.factor(densidad_concursos$densidad_concursos[round(runif(1,1,length(densidad_concursos$densidad_concursos)))]),
+        as.factor(1)
+      )
+      users_good_bad <- rbind(users_good_bad,random_row)
+    }
+
+# CLASSIFICATION
+#
+#   Árboles (ctree)
+#
+#     Videos (videos_base_active_users)
+        videos_base_active_users$success <- sapply(videos_base_active_users$success, function(s){
+          return(as.factor(s))
+        })
+        
+        # Separar info en training y test:
+        set.seed(1234)
+        sets <- sample(2, nrow(videos_base_active_users), replace = TRUE, prob = c(0.7, 0.3)) 
+        videos_active_train <- videos_base_active_users[sets == 1, ]
+        videos_active_test <- videos_base_active_users[sets == 2, ]
+        
+        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        formula <- success ~ duracion + shares_first_day + new_users + active_raffles + release_difference_hours + active_canjes
+        
+        # Generación del árbol
+        videos_active_users_ctree <- ctree(formula, data = videos_active_train)
+        
+        # Capacidad clasificadora del árbol
+        table(predict(videos_active_users_ctree), videos_active_train$success)
+        
+        # Visualización
+        plot(videos_active_users_ctree)
+        plot(videos_active_users_ctree, type ="simple")
+        
+        # Test del árbol
+        videos_active_users_prediction <- predict(videos_active_users_ctree, newdata = videos_active_test)
+        table(videos_active_users_prediction, videos_active_test$success)
+        
+#     Videos (videos_base_penetracion)
+        videos_base_penetracion$success <- sapply(videos_base_penetracion$success, function(s){
+          return(as.factor(s))
+        })
+        
+        # Separar info en training y test:
+        set.seed(1234)
+        sets <- sample(2, nrow(videos_base_penetracion), replace = TRUE, prob = c(0.7, 0.3)) 
+        videos_penetracion_train <- videos_base_penetracion[sets == 1, ]
+        videos_penetracion_test <- videos_base_penetracion[sets == 2, ]
+        
+        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        formula <- success ~ duracion + shares_first_day + new_users + active_raffles + release_difference_hours + active_canjes
+        
+        # Generación del árbol
+        videos_penetracion_ctree <- ctree(formula, data = videos_penetracion_train)
+        
+        # Capacidad clasificadora del árbol
+        table(predict(videos_penetracion_ctree), videos_penetracion_train$success)
+        
+        # Visualización
+        plot(videos_penetracion_ctree)
+        plot(videos_penetracion_ctree, type ="simple")
+        
+        # Test del árbol
+        videos_penetracion_prediction <- predict(videos_penetracion_ctree, newdata = videos_penetracion_test)
+        table(videos_penetracion_prediction, videos_penetracion_test$success)
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
