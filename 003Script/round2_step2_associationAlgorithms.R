@@ -6,8 +6,8 @@ videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep="
 
 # UBUNTU
 
-users_processed <- read.csv("/home/jleon/memoria/002ProcessedData/users.csv", header = TRUE, sep=";")
-videos_processed <- read.csv("/home/jleon/memoria/002ProcessedData/videos.csv", header = TRUE, sep=";")
+#users_processed <- read.csv("/home/jleon/memoria/002ProcessedData/users.csv", header = TRUE, sep=";")
+#videos_processed <- read.csv("/home/jleon/memoria/002ProcessedData/videos.csv", header = TRUE, sep=";")
 
 # Discretizing
 
@@ -115,7 +115,7 @@ videos_relation_2<- videos_discrete[c(
 )]
 
 apriori_videos_appereance_list = list(lhs = c("active_raffles=10 o m?s", "active_raffles=Entre 7 y 9", "active_raffles=Entre 5 y 6", "active_raffles=Entre 3 y 4", "active_raffles=2 o menos"),default = "rhs")
-apriori_relation_test <- apriori(videos_discrete, parameter =list(support=0.1,confidence=0.4))
+apriori_relation_1 <- apriori(videos_relation_1, parameter =list(support=0.1,confidence=0.4))
 
 
 apriori_videos_appereance_list = list(
@@ -201,16 +201,6 @@ apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support
   # Active raffles vs active users
   
     inspect(apriori_relation_1)
-    # El soporte es peque?o porque la cantidad de datos "de inter?s" es peque?a
-    observaciones <- sqldf("SELECT count(*) as total FROM videos");
-    videos_mas_160_actives <- sqldf("SELECT count(*) as total FROM videos WHERE active_users > 160")
-    
-    observaciones$total
-    videos_mas_160_actives$total
-    
-    videos_mas_160_actives$total/observaciones$total
-    
-    # Aproximadamente un 11% de los datos tienen m?s de 160 usuarios activos al momento del lanzamiento
 
   # Duraci?n y release difference vs penetraci?n
     
@@ -262,5 +252,5 @@ apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support
   
 # Todo junto?
   all_rules <- apriori(users_discrete, parameter =list(support=0.2,confidence=0.7,target="rules"))
-  inspect(sort(all_rules, decreasing= FALSE, by ="lift"))
+  #inspect(sort(all_rules, decreasing= FALSE, by ="lift"))
   

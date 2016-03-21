@@ -445,9 +445,11 @@
 
 # CLASSIFICATION
 #
-#   Árboles (ctree)
+#   Videos (videos_base_active_users)
+#   
 #
-#     Videos (videos_base_active_users)
+#     Árboles (ctree)
+#
         videos_base_active_users$success <- sapply(videos_base_active_users$success, function(s){
           return(as.factor(s))
         })
@@ -474,8 +476,16 @@
         # Test del árbol
         videos_active_users_prediction <- predict(videos_active_users_ctree, newdata = videos_active_test)
         table(videos_active_users_prediction, videos_active_test$success)
+#    
+#     Naive bayers
+#     
         
-#     Videos (videos_base_penetracion)
+        videos_active_users_bayes <- naiveBayes(formula, data=videos_active_train)
+        table(predict(videos_active_users_bayes, videos_active_test, type=c("class")), videos_active_test$success)
+        
+#   Videos (videos_base_penetracion)
+#
+#     Árboles (ctree)
         videos_base_penetracion$success <- sapply(videos_base_penetracion$success, function(s){
           return(as.factor(s))
         })
@@ -502,7 +512,13 @@
         # Test del árbol
         videos_penetracion_prediction <- predict(videos_penetracion_ctree, newdata = videos_penetracion_test)
         table(videos_penetracion_prediction, videos_penetracion_test$success)
-      
+
+#    
+#     Naive bayers
+#     
+        
+        videos_penetracion_bayes <- naiveBayes(formula, data=videos_penetracion_train)
+        table(predict(videos_penetracion_bayes, videos_penetracion_test, type=c("class")), videos_penetracion_test$success)      
       
       
       
