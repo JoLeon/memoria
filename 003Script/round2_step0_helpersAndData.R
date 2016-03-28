@@ -1,7 +1,7 @@
 # HELPERS
 
 # WIN
- setwd("C:/Users/J/Documents/GitHub/memoria")
+ #setwd("C:/Users/J/Documents/GitHub/memoria")
 
 minmaxNormalization <- function(sample,min,max){
   if(is.na(sample)){
@@ -380,15 +380,16 @@ library(Hmisc)
 library(foreach)
 library(sqldf)
 library(e1071)
+library(party)
 
 # DATA
 
 #WIN
-users_raw <- read.csv("002RawData/users.csv", header = TRUE, sep=";")
-videos_raw <- read.csv("002RawData/videos.csv", header = TRUE, sep=";")
+#users_raw <- read.csv("002RawData/users.csv", header = TRUE, sep=";")
+#videos_raw <- read.csv("002RawData/videos.csv", header = TRUE, sep=";")
 #shares_raw <- read.csv("../002Data/shares.csv", header = TRUE, sep=";")
 
 #LINUX
-#users_raw <- read.csv("/home/jleon/memoria/002RawData/users.csv", header = TRUE, sep=";")
-#videos_raw <- read.csv("/home/jleon/memoria/002RawData/videos.csv", header = TRUE, sep=";")
+users_raw <- read.csv("/home/jleon/memoria/002RawData/users.csv", header = TRUE, sep=";")
+videos_raw <- read.csv("/home/jleon/memoria/002RawData/videos.csv", header = TRUE, sep=";")
 #shares_raw <- read.csv("/home/jleon/memoria/002RawData/shares.csv", header = TRUE, sep=";")

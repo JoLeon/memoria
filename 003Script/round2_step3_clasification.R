@@ -11,6 +11,8 @@
 #     - Active users (+150) 
 #     - Penetración (+70%)
 #
+# Reproducir:
+set.seed(9182)
 
 #   Active users
 
@@ -455,7 +457,6 @@
         })
         
         # Separar info en training y test:
-        set.seed(1234)
         sets <- sample(2, nrow(videos_base_active_users), replace = TRUE, prob = c(0.7, 0.3)) 
         videos_active_train <- videos_base_active_users[sets == 1, ]
         videos_active_test <- videos_base_active_users[sets == 2, ]
@@ -482,7 +483,7 @@
         
         videos_active_users_bayes <- naiveBayes(formula, data=videos_active_train)
         table(predict(videos_active_users_bayes, videos_active_test, type=c("class")), videos_active_test$success)
-        
+#        
 #   Videos (videos_base_penetracion)
 #
 #     Árboles (ctree)
@@ -491,7 +492,6 @@
         })
         
         # Separar info en training y test:
-        set.seed(1234)
         sets <- sample(2, nrow(videos_base_penetracion), replace = TRUE, prob = c(0.7, 0.3)) 
         videos_penetracion_train <- videos_base_penetracion[sets == 1, ]
         videos_penetracion_test <- videos_base_penetracion[sets == 2, ]
@@ -520,18 +520,74 @@
         videos_penetracion_bayes <- naiveBayes(formula, data=videos_penetracion_train)
         table(predict(videos_penetracion_bayes, videos_penetracion_test, type=c("class")), videos_penetracion_test$success)      
       
+#
+#   Users (users_good_bad)
+#
+#     Árboles (ctree)
+        str(users_quality)
+        
+        # Separar info en training y test:
+        sets <- sample(2, nrow(users_quality), replace = TRUE, prob = c(0.7, 0.3)) 
+        users_quality_train <- users_quality[sets == 1, ]
+        users_quality_test <- users_quality[sets == 2, ]
+        
+        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        formula <- quality ~ genero + recruitments + concursos_participados + premios_canjeados + edad + sistema_registro + densidad_videos + calidad_videos + densidad_concursos
+        
+        # Generación del árbol
+        users_quality_ctree <- ctree(formula, data = users_quality_train)
+        
+        # Capacidad clasificadora del árbol
+        table(predict(users_quality_ctree), users_quality_train$quality)
+        
+        # Visualización
+        plot(users_quality_ctree)
+        plot(users_quality_ctree, type ="simple")
+        
+        # Test del árbol
+        users_quality_prediction <- predict(users_quality_ctree, newdata = users_quality_test)
+        table(users_quality_prediction, users_quality_test$quality)
+        
+        #    
+        #     Naive bayers
+        #     
+        
+        users_quality_bayes <- naiveBayes(formula, data=users_quality_train)
+        table(predict(users_quality_bayes, users_quality_test, type=c("class")), users_quality_test$quality)  
       
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
+#
+#   Users (users_good_bad)
+#
+#     Árboles (ctree)
+        str(users_good_bad)
+        
+        # Separar info en training y test:
+        sets <- sample(2, nrow(users_good_bad), replace = TRUE, prob = c(0.7, 0.3)) 
+        users_good_bad_train <- users_good_bad[sets == 1, ]
+        users_good_bad_test <- users_good_bad[sets == 2, ]
+        
+        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        formula <- good_user ~ genero + recruitments + concursos_participados + premios_canjeados + edad + sistema_registro + densidad_videos + calidad_videos + densidad_concursos
+        
+        # Generación del árbol
+        users_good_bad_ctree <- ctree(formula, data = users_good_bad_train)
+        
+        # Capacidad clasificadora del árbol
+        table(predict(users_good_bad_ctree), users_good_bad_train$good_user)
+        
+        # Visualización
+        plot(users_good_bad_ctree)
+        plot(users_good_bad_ctree, type ="simple")
+        
+        # Test del árbol
+        users_good_bad_prediction <- predict(users_good_bad_ctree, newdata = users_good_bad_test)
+        table(users_good_bad_prediction, users_good_bad_test$good_user)
+        
+        #    
+        #     Naive bayers
+        #     
+        
+        users_good_bad_bayes <- naiveBayes(formula, data=users_good_bad_train)
+        table(predict(users_good_bad_bayes, users_good_bad_test, type=c("class")), users_good_bad_test$good_user)  
       
