@@ -1,6 +1,6 @@
 # WIN
 
-#setwd("C:/Users/J/Documents/GitHub/memoria")
+setwd("C:/Users/J/Documents/GitHub/memoria")
 users_processed <- read.csv("002ProcessedData/users.csv", header = TRUE, sep=";")
 videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep=";")
 

@@ -52,7 +52,7 @@ getDayName <- function(x){
     }
   }
 }
-setUserShareFrequency <- function(x,y){
+  setUserShareFrequency <- function(x,y){
   if(y==0){
     0
   }
@@ -109,14 +109,14 @@ getUserQuality <- function(dif_last_first,share_frequency){
   }
 }
 getUserQualityId <- function(dif_last_first,share_frequency){
-  # 0: no interesado
-  # 1: no capturado
-  # 2: perdido
-  # 3: diario por un mes
-  # 4: diario por una semana
-  # 5: diario constante
-  # 6: semenal por un mes
-  # 7: semanal constante
+    # 0: no interesado
+    # 1: no capturado
+    # 2: perdido
+    # 3: diario por un mes
+    # 4: diario por una semana
+    # 5: diario constante
+    # 6: semenal por un mes
+    # 7: semanal constante
   if(dif_last_first==-1){
     as.factor("0")
   }
