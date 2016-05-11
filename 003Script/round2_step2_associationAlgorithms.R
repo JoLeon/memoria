@@ -1,6 +1,6 @@
 # WIN
 
-setwd("C:/Users/J/Documents/GitHub/memoria")
+setwd("C:/Users/leonv/Documents/GitHub/memoria")
 users_processed <- read.csv("002ProcessedData/users.csv", header = TRUE, sep=";")
 videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep=";")
 
@@ -11,12 +11,32 @@ videos_processed <- read.csv("002ProcessedData/videos.csv", header = TRUE, sep="
 
 # Discretizing
 
-users_discrete <- users_processed[c("puntos_historicos", "genero", "dia_afiliacion", "shares_totales", "recruitments", "concursos_participados", "edad", "quality", "sistema_registro", "calidad_videos", "densidad_concursos")]
+users_discrete <- users_processed[c(
+  "puntos_historicos", 
+  "genero", 
+  "dia_afiliacion", 
+  "shares_totales", 
+  "recruitments", 
+  "concursos_participados",
+  "premios_canjeados",
+  "tickets_canjeados",
+  "edad", 
+  "quality", 
+  "sistema_registro", 
+  "calidad_videos", 
+  "densidad_concursos",
+  "densidad_videos"
+)]
+
 users_discrete$puntos_historicos <- discretize(users_discrete$puntos_historicos, method="cluster", categories=5)
 users_discrete$shares_totales <- discretize(users_discrete$shares_totales, method="cluster", categories=5)
 users_discrete$concursos_participados <- discretize(users_discrete$concursos_participados, method="cluster", categories=5)
 users_discrete$edad <- discretize(users_discrete$edad, method="cluster", categories=5)
+users_discrete$tickets_canjeados <- discretize(users_discrete$tickets_canjeados, method="cluster", categories=5)
 users_discrete$recruitments <- sapply(users_discrete$recruitments, function(rec){
+  if(is.na(rec)){
+    return(as.factor(0))
+  }
   if(rec >0){
     return(as.factor(1)) 
   } 
@@ -28,11 +48,17 @@ users_discrete$genero <- sapply(users_discrete$genero, function(g){
   }
   return(as.factor(g))
 })
+users_discrete$premios_canjeados <- sapply(users_discrete$premios_canjeados, function(p){
+  if(p == 0){
+    return(as.factor(0))
+  }
+  return(as.factor(1))
+})
 # VIDEOS
-
+str(users_discrete)
 disRaffles <- function(raffles){
   if(raffles >= 10){
-    return(as.factor("10 o m?s"))
+    return(as.factor("10 o más"))
   }
   if(raffles >= 7){
     return(as.factor("Entre 7 y 9"))
@@ -46,7 +72,7 @@ disRaffles <- function(raffles){
   return(as.factor("2 o menos"))
 }
 disActiveUsers <- function(users){
-  if(users > 160){ return(as.factor("M?s de 160"))}
+  if(users > 160){ return(as.factor("Más de 160"))}
   if(users > 120){ return(as.factor("(120, 160]"))}
   if(users > 80){ return(as.factor("(80, 120]"))}
   if(users > 40){ return(as.factor("(40, 80]"))}
@@ -74,18 +100,18 @@ disDuracion <- function(duracion){
   if(duracion < 600){
     return(as.factor("(300, 600]"))
   }
-  return(as.factor("600 o m?s"))
+  return(as.factor("600 o más"))
 }
 disRelease <- function(difference){
   if(difference <= 6){ return(as.factor("[0, 6]"))}
-  if(difference <= 24){ return(as.factor("Entre 6 horas y 1 d?a"))}
-  if(difference <= 72){ return(as.factor("Entre 1 y 3 d?as"))}
-  if(difference <= 168){ return(as.factor("Entre 3 d?as y 1 semana"))}
+  if(difference <= 24){ return(as.factor("Entre 6 horas y 1 día"))}
+  if(difference <= 72){ return(as.factor("Entre 1 y 3 días"))}
+  if(difference <= 168){ return(as.factor("Entre 3 días y 1 semana"))}
   if(difference <= 372){ return(as.factor("Entre 1 y 2 semanas"))}
-  return(as.factor("M?s de 2 semanas"))
+  return(as.factor("Más de 2 semanas"))
 }
 disPenetracion <- function(penetracion){
-  if(penetracion > 0.9){ return(as.factor("M?s del 90%"))}
+  if(penetracion > 0.9){ return(as.factor("Más del 90%"))}
   if(penetracion >= 0.8){ return(as.factor("Entre 80% y 90%"))}
   if(penetracion >= 0.7){ return(as.factor("Entre 70% y 80%"))}
   if(penetracion >= 0.6){ return(as.factor("Entre 60% y 70%"))}
@@ -102,17 +128,26 @@ videos_discrete$active_raffles                <- sapply(videos_processed$active_
 videos_discrete$duracion                      <- sapply(videos_processed$duracion, disDuracion)
 videos_discrete$release_difference_hours      <- sapply(videos_processed$release_difference_hours, disRelease)
 videos_discrete$penetracion                   <- sapply(videos_processed$penetracion, disPenetracion)
-
-videos_relation_1 <- videos_discrete[c(
-  "active_raffles",
-  "active_users"
-)]
-
-videos_relation_2<- videos_discrete[c(
+videos_discrete <- videos_discrete[c(
   "duracion",
   "release_difference_hours",
+  "total_views",
+  "shares_first_day",
+  "shares_first_week",
+  "shares_first_month",
+  "total_shares",
+  "active_users",
+  "active_raffles",
+  "active_canjes",
   "penetracion"
 )]
+
+videos_discrete$total_views <- discretize(videos_discrete$total_views, method="cluster", categories=5)
+videos_discrete$shares_first_day <- discretize(videos_discrete$shares_first_day, method="cluster", categories=5)
+videos_discrete$shares_first_week <- discretize(videos_discrete$shares_first_week, method="cluster", categories=5)
+videos_discrete$shares_first_month <- discretize(videos_discrete$shares_first_month, method="cluster", categories=5)
+videos_discrete$total_shares <- discretize(videos_discrete$total_shares, method="cluster", categories=5)
+videos_discrete$active_canjes <- discretize(videos_discrete$active_canjes, method="cluster", categories=5)
 
 apriori_videos_appereance_list = list(lhs = c("active_raffles=10 o m?s", "active_raffles=Entre 7 y 9", "active_raffles=Entre 5 y 6", "active_raffles=Entre 3 y 4", "active_raffles=2 o menos"),default = "rhs")
 apriori_relation_1 <- apriori(videos_relation_1, parameter =list(support=0.1,confidence=0.4))
@@ -127,11 +162,11 @@ apriori_videos_appereance_list = list(
     "duracion=(180, 240]",
     "duracion=(240, 300]",
     "duracion=(300, 600]",
-    "duracion=600 o m?s",
+    "duracion=600 o más",
     "release_difference_hours=[0, 6]",
-    "release_difference_hours=Entre 6 horas y 1 d?a",
-    "release_difference_hours=Entre 1 y 3 d?as",
-    "release_difference_hours=Entre 3 d?as y 1 semana",
+    "release_difference_hours=Entre 6 horas y 1 día",
+    "release_difference_hours=Entre 1 y 3 días",
+    "release_difference_hours=Entre 3 días y 1 semana",
     "release_difference_hours=Entre 1 y 2 semanas"
   ),
   default = "rhs"
@@ -254,3 +289,45 @@ apriori_relation_6 <- apriori(simplified_user_relations, parameter =list(support
   all_rules <- apriori(users_discrete, parameter =list(support=0.2,confidence=0.7,target="rules"))
   #inspect(sort(all_rules, decreasing= FALSE, by ="lift"))
   
+# WRITING
+
+apriori_users_appeareance_list = list(
+  rhs = c(
+    "quality=Daily, for a month",
+    "quality=Daily, for a week",
+    "quality=Daily, constant",
+    "quality=Weekly, for a month",
+    "quality=Weekly, constant"
+  ),
+  default = "lhs"
+)
+apriori_writing <- apriori(users_discrete, parameter =list(support=0.005,confidence=0.5), appearance = apriori_users_appeareance_list)
+
+inspect (apriori_writing)
+
+apriori_users_appeareance_list = list(
+  rhs = c(
+    "quality=Lost"
+  ),
+  default = "lhs"
+)
+apriori_writing <- apriori(users_discrete, parameter =list(support=0.09,confidence=0.5), appearance = apriori_users_appeareance_list)
+
+inspect (apriori_writing)
+
+
+apriori_videos_appereance_list = list(
+  rhs = c(
+    "penetracion=Entre 20% y 30%",
+    "penetracion=Entre 30% y 40%",
+    "penetracion=Entre 40% y 50%",
+    "penetracion=Entre 50% y 60%",
+    "penetracion=Entre 60% y 70%",
+    "penetracion=Entre 70% y 80%",
+    "penetracion=Entre 80% y 90%"
+  ),
+  default = "lhs"
+)
+apriori_writing <- apriori(videos_discrete, parameter =list(support=0.01,confidence=0.5), appearance = apriori_videos_appereance_list)
+
+inspect(apriori_writing)

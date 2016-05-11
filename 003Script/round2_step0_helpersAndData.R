@@ -52,7 +52,7 @@ getDayName <- function(x){
     }
   }
 }
-  setUserShareFrequency <- function(x,y){
+setUserShareFrequency <- function(x,y){
   if(y==0){
     0
   }
