@@ -307,11 +307,19 @@ inspect (apriori_writing)
 
 apriori_users_appeareance_list = list(
   rhs = c(
-    "quality=Lost"
+    "quality=Not captured"
   ),
   default = "lhs"
 )
-apriori_writing <- apriori(users_discrete, parameter =list(support=0.09,confidence=0.5), appearance = apriori_users_appeareance_list)
+apriori_writing <- apriori(users_discrete[c(
+  "genero",
+  "densidad_videos",
+  "densidad_concursos",
+  "calidad_videos",
+  "sistema_registro",
+  "quality",
+  "edad"
+)], parameter =list(support=0.25,confidence=0.6), appearance = apriori_users_appeareance_list)
 
 inspect (apriori_writing)
 

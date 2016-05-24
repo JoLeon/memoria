@@ -1,0 +1,1 @@
+http://www.r-bloggers.com/identifying-potential-customers-with-classification-techniques-in-r-language/

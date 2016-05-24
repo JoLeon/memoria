@@ -1,3 +1,76 @@
+varImp <- function(object, surrogates = FALSE, competes = TRUE, ...)
+{
+  tmp <- rownames(object$splits)
+  
+  allVars <- colnames(attributes(object$terms)$factors)
+  if(is.null(tmp))
+  {
+    out<-NULL
+    zeros <- data.frame(x = rep(0, length(allVars)),
+                        Variable = allVars)
+    out <- rbind(out, zeros)
+  }
+  
+  else {
+    
+    rownames(object$splits) <- 1:nrow(object$splits)
+    splits <- data.frame(object$splits)
+    splits$var <- tmp
+    splits$type <- ""
+    
+    frame <- as.data.frame(object$frame)
+    index <- 0
+    for(i in 1:nrow(frame))
+    {
+      if(frame$var[i] != "<leaf>")
+      {
+        index <- index + 1
+        splits$type[index] <- "primary"
+        if(frame$ncompete[i] > 0)
+        {
+          for(j in 1:frame$ncompete[i])
+          {
+            index <- index + 1
+            splits$type[index] <- "competing"
+          }
+        }
+        if(frame$nsurrogate[i] > 0)
+        {
+          for(j in 1:frame$nsurrogate[i])
+          {
+            index <- index + 1
+            splits$type[index] <- "surrogate"
+          }
+        }
+      }
+    }
+    splits$var <- factor(as.character(splits$var))
+    if(!surrogates) splits <- subset(splits, type != "surrogate")
+    if(!competes) splits <- subset(splits, type != "competing")
+    out <- aggregate(splits$improve,
+                     list(Variable = splits$var),
+                     sum,
+                     na.rm = TRUE)
+    
+    allVars <- colnames(attributes(object$terms)$factors)
+    if(!all(allVars %in% out$Variable))
+    {
+      missingVars <- allVars[!(allVars %in% out$Variable)]
+      zeros <- data.frame(x = rep(0, length(missingVars)),
+                          Variable = missingVars)
+      out <- rbind(out, zeros)
+    }
+  }
+  out2 <- data.frame(Overall = out$x)
+  rownames(out2) <- out$Variable
+  out2
+}
+
+
+
+
+
+
 # RELACIONES INTERESANTES
 
 # submuestrar - sobremuestrar
@@ -591,21 +664,79 @@ set.seed(9182)
         videos_active_users_prediction_rpart <- predict(videos_active_users_rpart, newdata = videos_active_test, type="class")
         table(videos_active_users_prediction_rpart, videos_active_test$success)
         
+        # Prune
+        videos_active_users_rpart_pruned <- prune(videos_active_users_rpart, 0.029)
+        rpart.plot(videos_active_users_rpart_pruned, type=0, extra=104, varlen=0, faclen=0)
+        
 #
 #     Ãrboles (randomForest)
 #
-        videos_active_users_random <- randomForest(formula, data=videos_active_train, ntree=100, proximity=T)
+        videos_active_users_random <- randomForest(success ~ ., data=videos_active_train, importance=T, ntree=100, proximity=T)
         table(predict(videos_active_users_random), videos_active_train$success)
         plot(videos_active_users_random)
         print(videos_active_users_random)
-        importance(videos_active_users_random)
+        round(importance(videos_active_users_random),2)
         
 #    
 #     Naive bayers
 #     
         
-        videos_active_users_bayes <- naiveBayes(formula, data=videos_active_train)
+        videos_active_users_bayes <- naiveBayes(formula, data=videos_active_train, laplace=3)
+        pred.videos.active.bayes <- predict(videos_active_users_bayes, videos_active_test[,-7],type="raw")
         table(predict(videos_active_users_bayes, videos_active_test, type=c("class")), videos_active_test$success)
+        head(predict(videos_active_users_bayes, videos_active_test,type=c("raw")))
+        
+#
+#     SVM
+#
+        
+        videos_active_users_svm_linear <- svm(formula, data = videos_active_train, kernel="linear",probability = TRUE)
+        videos_active_users_svm_radial <- svm(formula, data = videos_active_train, kernel="radial",probability = TRUE)
+        pred.videos.active.svm.linear <- predict(videos_active_users_svm_linear, videos_active_test, probability = TRUE)
+        pred.videos.active.svm.radial <- predict(videos_active_users_svm_radial, videos_active_test, probability = TRUE)
+        attr(pred.videos.active.svm.linear, "probabilities")[1:6,]
+        attr(pred.videos.active.svm.radial, "probabilities")[1:6,]
+
+#
+#     ROC
+#        
+
+        c.legend<-c("rpart, auc=","random forest, auc=","naive Bayes, auc=","svm.linear, auc=","svm.radial, auc=")
+        # árbol
+        pred.videos.active.tree <- predict(videos_active_users_rpart, videos_active_test[,-7])
+        pred <- prediction(pred.videos.active.tree[,2], videos_active_test[,7])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,col="red",lwd=2)
+        c.legend[1]<-paste(c.legend[1],round((performance(pred,"auc")@y.values)[[1]],3))
+        # random forest
+        pred.videos.active.forest <- predict(videos_active_users_random, videos_active_test[,-7],type="prob")
+        pred <- prediction(pred.videos.active.forest[,2], videos_active_test[,7])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="green",lwd=2)
+        c.legend[2]<-paste(c.legend[2],round((performance(pred,"auc")@y.values)[[1]],3))
+        # bayes
+        pred.videos.active.bayes <- predict(videos_active_users_bayes, videos_active_test[,-7],type="raw")
+        pred <- prediction(pred.videos.active.bayes[,2], videos_active_test[,7])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="blue",lwd=2)
+        c.legend[3]<-paste(c.legend[3],round((performance(pred,"auc")@y.values)[[1]],3))
+        # SVM lineal
+        pred.videos.active.svm.linear <- predict(videos_active_users_svm_linear, videos_active_test, probability = TRUE)
+        pred <- prediction(attr(pred.videos.active.svm.linear, "probabilities")[,2], videos_active_test[,7])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="purple",lwd=2)
+        c.legend[4]<-paste(c.legend[4],round((performance(pred,"auc")@y.values)[[1]],3))
+        # SVM radial
+        pred.videos.active.svm.radial <- predict(videos_active_users_svm_radial, videos_active_test, probability = TRUE)
+        pred <- prediction(attr(pred.videos.active.svm.radial, "probabilities")[,2], videos_active_test[,7])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="black",lwd=2)
+        c.legend[5]<-paste(c.legend[5],round((performance(pred,"auc")@y.values)[[1]],3))
+
+        # leyenda
+        legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1),lwd=c(2,2,2,2,2),col=c("red","green","blue","purple","black"))
+                
+        
 #------------------------------------------------------------------------------------------------------
 #        
 #   Videos (videos_base_penetracion)
@@ -797,7 +928,7 @@ set.seed(9182)
 #
 #   Users (users_simple_quality)
 #------------------------------------------------------------------------------------------------------
-#     Ãrboles (ctree)
+#     Ãrboles (ctree)
         str(users_simple_quality)
         
         # Separar info en training y test:
@@ -874,9 +1005,9 @@ set.seed(9182)
               plot(videos_active_users_ctree)
               table(videos_active_users_prediction, videos_active_test$success)
       #     Rpart
-              rpart.plot(videos_active_users_rpart, type=0, extra=104, varlen=0, faclen=0)
+              rpart.plot(videos_active_users_rpart, type=0, extra=105, varlen=0, faclen=0)
               table(videos_active_users_prediction_rpart, videos_active_test$success)
-      #     Random
+        #     Random
               table(predict(videos_active_users_random), videos_active_train$success)
               plot(videos_active_users_random)
               print(videos_active_users_random)
@@ -892,13 +1023,13 @@ set.seed(9182)
               plot(videos_penetracion_ctree)
               table(videos_penetracion_prediction, videos_penetracion_test$success)
       #     Rpart
-              rpart.plot(videos_penetracion_rpart, type=0, extra=104, varlen=0, faclen=0)
+              rpart.plot(videos_penetracion_rpart, type=0, extra=105, varlen=0, faclen=0)
               table(videos_penetracion_prediction_rpart, videos_penetracion_test$success)
       #     Random
               table(predict(videos_penetracion_random), videos_penetracion_train$success)
               plot(videos_penetracion_random)
               print(videos_penetracion_random)
-              importance(videos_penetracion_random)
+              importance(videos_penetracion_random, type=1)
       #     Bayes
               table(predict(videos_penetracion_bayes, videos_penetracion_test, type=c("class")), videos_penetracion_test$success)      
       
