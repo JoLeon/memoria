@@ -1,0 +1,3 @@
+http://www.r-bloggers.com/identifying-potential-customers-with-classification-techniques-in-r-language/
+http://machinelearningmastery.com/assessing-comparing-classifier-performance-roc-curves-2/
+http://ebp.uga.edu/courses/Chapter%204%20-%20Diagnosis%20I/8%20-%20ROC%20curves.html
