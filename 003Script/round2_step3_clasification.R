@@ -75,7 +75,7 @@ varImp <- function(object, surrogates = FALSE, competes = TRUE, ...)
 
 # submuestrar - sobremuestrar
 # Utilizar herramientas de clasificacion
-# Usar árboles y naive bayes? confusion matrix? prediciton (pasarle arbol) y performance
+# Usar Ã¡rboles y naive bayes? confusion matrix? prediciton (pasarle arbol) y performance
 #------------------------------------------------------------------------------------------------------
 # OVERSAMPLING
 #
@@ -83,10 +83,10 @@ varImp <- function(object, surrogates = FALSE, competes = TRUE, ...)
 # Videos:
 #   Targets:
 #     - Active users (+150) 
-#     - Penetración (+70%)
+#     - PenetraciÃ³n (+70%)
 #
 # Reproducir:
-set.seed(9182)
+set.seed(98712497)
 #   Active users
 
     videos_base_active_users <- videos_processed[c("duracion", "shares_first_day", "new_users", "active_raffles", "release_difference_hours", "active_canjes", "active_users", "penetracion")]
@@ -629,47 +629,50 @@ set.seed(9182)
     videos_active_train <- videos_base_active_users[sets == 1, ]
     videos_active_test <- videos_base_active_users[sets == 2, ]
     
-    # Definir la variable objetivo junto con las variables que en teoría la afectarán
+    # Definir la variable objetivo junto con las variables que en teorÃ�a la afectarÃ¡n
     formula <- success ~ duracion + shares_first_day + new_users + active_raffles + release_difference_hours + active_canjes
     
 #
 #
-#     Árboles (ctree)
+#     Ãrboles (ctree)
 #
-        # Generación del árbol
+        # GeneraciÃ³n del Ã¡rbol
         videos_active_users_ctree <- ctree(formula, data = videos_active_train)
         
-        # Capacidad clasificadora del árbol
+        # Capacidad clasificadora del Ã¡rbol
         table(predict(videos_active_users_ctree), videos_active_train$success)
         
-        # Visualización
+        # VisualizaciÃ³n
         plot(videos_active_users_ctree)
         plot(videos_active_users_ctree, type ="simple")
         
-        # Test del árbol
+        # Test del Ã¡rbol
         videos_active_users_prediction <- predict(videos_active_users_ctree, newdata = videos_active_test)
         table(videos_active_users_prediction, videos_active_test$success)
         
 #        
-#     Árboles (rpart)
+#     Ãrboles (rpart)
 #
         
-        # Generación del árbol
+        # GeneraciÃ³n del Ã¡rbol
         videos_active_users_rpart <- rpart(formula, data = videos_active_train, control = rpart.control(minsplit= 50, maxdepth = 10))
         
-        # Visualización
+        # VisualizaciÃ³n
         rpart.plot(videos_active_users_rpart, type=0, extra=104, varlen=0, faclen=0)
         
-        # Test del árbol
+        # Test del Ã¡rbol
         videos_active_users_prediction_rpart <- predict(videos_active_users_rpart, newdata = videos_active_test, type="class")
         table(videos_active_users_prediction_rpart, videos_active_test$success)
         
         # Prune
+        plotcp(videos_active_users_rpart)
         videos_active_users_rpart_pruned <- prune(videos_active_users_rpart, 0.029)
+        videos_active_users_prediction_rpart_pruned <- predict(videos_active_users_rpart_pruned, newdata = videos_active_test, type="class")
+        table(videos_active_users_prediction_rpart_pruned, videos_active_test$success)
         rpart.plot(videos_active_users_rpart_pruned, type=0, extra=104, varlen=0, faclen=0)
         
 #
-#     Árboles (randomForest)
+#     Ãrboles (randomForest)
 #
         videos_active_users_random <- randomForest(success ~ ., data=videos_active_train, importance=T, ntree=100, proximity=T)
         table(predict(videos_active_users_random, newdata = videos_active_test), videos_active_test$success)
@@ -705,47 +708,53 @@ set.seed(9182)
 #     ROC
 #        
 
-        c.legend<-c("rpart =","random forest =","naive Bayes =","svm lineal =","svm radial =")
-        # �rbol
+        c.legend<-c("rpart =","rpart (poda) =","random forest =","naive Bayes =","svm lineal =","svm radial =")
+        # árbol
         pred.videos.active.tree <- predict(videos_active_users_rpart, videos_active_test[,-7])
         pred <- prediction(pred.videos.active.tree[,2], videos_active_test[,7])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,col="red",lwd=2)
         c.legend[1]<-paste(c.legend[1],round((performance(pred,"auc")@y.values)[[1]],3))
+        # árbol podado
+        pred.videos.active.tree <- predict(videos_active_users_rpart_pruned, videos_active_test[,-7])
+        pred <- prediction(pred.videos.active.tree[,2], videos_active_test[,7])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="yellow",lwd=2)
+        c.legend[2]<-paste(c.legend[2],round((performance(pred,"auc")@y.values)[[1]],3))
         # random forest
         pred.videos.active.forest <- predict(videos_active_users_random, videos_active_test[,-7],type="prob")
         pred <- prediction(pred.videos.active.forest[,2], videos_active_test[,7])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="green",lwd=2)
-        c.legend[2]<-paste(c.legend[2],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[3]<-paste(c.legend[3],round((performance(pred,"auc")@y.values)[[1]],3))
         # bayes
         pred.videos.active.bayes <- predict(videos_active_users_bayes, videos_active_test[,-7],type="raw")
         pred <- prediction(pred.videos.active.bayes[,2], videos_active_test[,7])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="blue",lwd=2)
-        c.legend[3]<-paste(c.legend[3],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[4]<-paste(c.legend[4],round((performance(pred,"auc")@y.values)[[1]],3))
         # SVM lineal
         pred.videos.active.svm.linear <- predict(videos_active_users_svm_linear, videos_active_test, probability = TRUE)
         pred <- prediction(attr(pred.videos.active.svm.linear, "probabilities")[,2], videos_active_test[,7])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="purple",lwd=2)
-        c.legend[4]<-paste(c.legend[4],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[5]<-paste(c.legend[5],round((performance(pred,"auc")@y.values)[[1]],3))
         # SVM radial
         pred.videos.active.svm.radial <- predict(videos_active_users_svm_radial, videos_active_test, probability = TRUE)
         pred <- prediction(attr(pred.videos.active.svm.radial, "probabilities")[,2], videos_active_test[,7])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="black",lwd=2)
-        c.legend[5]<-paste(c.legend[5],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[6]<-paste(c.legend[6],round((performance(pred,"auc")@y.values)[[1]],3))
 
         # leyenda
-        legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1),lwd=c(2,2,2,2,2),col=c("red","green","blue","purple","black"))
+        legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1,1),lwd=c(2,2,2,2,2,2),col=c("red","yellow","green","blue","purple","black"))
                 
         
 #------------------------------------------------------------------------------------------------------
 #        
 #   Videos (videos_base_penetracion)
 #------------------------------------------------------------------------------------------------------
-#     Árboles (ctree)
+#     Ãrboles (ctree)
         videos_base_penetracion$success <- sapply(videos_base_penetracion$success, function(s){
           return(as.factor(s))
         })
@@ -755,42 +764,50 @@ set.seed(9182)
         videos_penetracion_train <- videos_base_penetracion[sets == 1, ]
         videos_penetracion_test <- videos_base_penetracion[sets == 2, ]
         
-        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        # Definir la variable objetivo junto con las variables que en teorÃ�a la afectarÃ¡n
         formula <- success ~ duracion + shares_first_day + new_users + active_raffles + release_difference_hours + active_canjes
         
-        # Generación del árbol
+        # GeneraciÃ³n del Ã¡rbol
         videos_penetracion_ctree <- ctree(formula, data = videos_penetracion_train)
         
-        # Capacidad clasificadora del árbol
+        # Capacidad clasificadora del Ã¡rbol
         table(predict(videos_penetracion_ctree), videos_penetracion_train$success)
         
-        # Visualización
+        # VisualizaciÃ³n
         plot(videos_penetracion_ctree)
         plot(videos_penetracion_ctree, type ="simple")
         
-        # Test del árbol (HERE)
+        # Test del Ã¡rbol (HERE)
         videos_penetracion_prediction <- predict(videos_penetracion_ctree, newdata = videos_penetracion_test)
         table(videos_penetracion_prediction, videos_penetracion_test$success)
         
 #        
-#     Árboles (rpart)
+#     Ãrboles (rpart)
 #
         
-        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        # Definir la variable objetivo junto con las variables que en teorÃ�a la afectarÃ¡n
         formula <- success ~ duracion + shares_first_day + new_users + active_raffles + release_difference_hours + active_canjes
         
-        # Generación del árbol
+        # GeneraciÃ³n del Ã¡rbol
         videos_penetracion_rpart <- rpart(formula, data = videos_penetracion_train, control = rpart.control(minsplit= 50, maxdepth = 10))
         
-        # Visualización
+        # VisualizaciÃ³n
         rpart.plot(videos_penetracion_rpart, type=0, extra=104, varlen=0, faclen=0)
         
-        # Test del árbol
+        # Test del Ã¡rbol
         videos_penetracion_prediction_rpart <- predict(videos_penetracion_rpart, newdata = videos_penetracion_test, type="class")
         table(videos_penetracion_prediction_rpart, videos_penetracion_test$success)
-
+        
+        # Prune
+        plotcp(videos_penetracion_rpart)
+        videos_penetracion_rpart_pruned <- prune(videos_penetracion_rpart, 0.018)
+        rpart.plot(videos_penetracion_rpart_pruned, type=0, extra=104, varlen=0, faclen=0)
+        videos_penetracion_prediction_rpart_pruned <- predict(videos_penetracion_rpart_pruned, newdata = videos_penetracion_test, type="class")
+        table(videos_penetracion_prediction_rpart_pruned, videos_penetracion_test$success)
+        videos_penetracion_rpart_pruned$variable.importance
+        
 #
-#     Árboles (randomForest)
+#     Ãrboles (randomForest)
 #
         videos_penetracion_random <- randomForest(success ~ ., data=videos_penetracion_train, importance=T, ntree=100, proximity=T)
         table(predict(videos_penetracion_random, newdata=videos_penetracion_test), videos_penetracion_test$success)
@@ -825,40 +842,46 @@ set.seed(9182)
 #     ROC
 #        
         
-        c.legend<-c("rpart =","random forest =","naive Bayes =","svm lineal =","svm radial =")
-        # �rbol
+        c.legend<-c("rpart =","rpart (podado) =","random forest =","naive Bayes =","svm lineal =","svm radial =")
+        # árbol
         pred.videos.penetracion.tree <- predict(videos_penetracion_rpart, videos_penetracion_test[,-8])
         pred <- prediction(pred.videos.penetracion.tree[,2], videos_penetracion_test[,8])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,col="red",lwd=2)
         c.legend[1]<-paste(c.legend[1],round((performance(pred,"auc")@y.values)[[1]],3))
+        # árbol podado
+        pred.videos.penetracion.tree <- predict(videos_penetracion_rpart_pruned, videos_penetracion_test[,-8])
+        pred <- prediction(pred.videos.penetracion.tree[,2], videos_penetracion_test[,8])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="yellow",lwd=2)
+        c.legend[2]<-paste(c.legend[2],round((performance(pred,"auc")@y.values)[[1]],3))
         # random forest
         pred.videos.penetracion.forest <- predict(videos_penetracion_random, videos_penetracion_test[,-8],type="prob")
         pred <- prediction(pred.videos.penetracion.forest[,2], videos_penetracion_test[,8])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="green",lwd=2)
-        c.legend[2]<-paste(c.legend[2],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[3]<-paste(c.legend[3],round((performance(pred,"auc")@y.values)[[1]],3))
         # bayes
         pred.videos.penetracion.bayes <- predict(videos_penetracion_bayes, videos_penetracion_test[,-8],type="raw")
         pred <- prediction(pred.videos.penetracion.bayes[,2], videos_penetracion_test[,8])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="blue",lwd=2)
-        c.legend[3]<-paste(c.legend[3],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[4]<-paste(c.legend[4],round((performance(pred,"auc")@y.values)[[1]],3))
         # SVM lineal
         pred.videos.penetracion.svm.linear <- predict(videos_penetracion_svm_linear, videos_penetracion_test, probability = TRUE)
         pred <- prediction(attr(pred.videos.penetracion.svm.linear, "probabilities")[,2], videos_penetracion_test[,8])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="purple",lwd=2)
-        c.legend[4]<-paste(c.legend[4],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[5]<-paste(c.legend[5],round((performance(pred,"auc")@y.values)[[1]],3))
         # SVM radial
         pred.videos.penetracion.svm.radial <- predict(videos_penetracion_svm_radial, videos_penetracion_test, probability = TRUE)
         pred <- prediction(attr(pred.videos.penetracion.svm.radial, "probabilities")[,2], videos_penetracion_test[,8])
         perf <- performance(pred, "tpr", "fpr")
         plot(perf,add=TRUE,col="black",lwd=2)
-        c.legend[5]<-paste(c.legend[5],round((performance(pred,"auc")@y.values)[[1]],3))
+        c.legend[6]<-paste(c.legend[6],round((performance(pred,"auc")@y.values)[[1]],3))
         
         # leyenda
-        legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1),lwd=c(2,2,2,2,2),col=c("red","green","blue","purple","black"))                
+        legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1,1),lwd=c(2,2,2,2,2,2),col=c("red","yellow","green","blue","purple","black"))                
   
       
 #------------------------------------------------------------------------------------------------------    
@@ -867,27 +890,33 @@ set.seed(9182)
 #------------------------------------------------------------------------------------------------------
 
 #        
-#     Árboles (rpart)
+#     Ãrboles (rpart)
 #
         
-        # Definir la variable objetivo junto con las variables que en teoría la afectarán
+        # Definir la variable objetivo junto con las variables que en teorÃ�a la afectarÃ¡n
         formula <- good_user ~ genero + recruitments + concursos_participados + premios_canjeados + edad + sistema_registro + densidad_videos + calidad_videos + densidad_concursos
         
-        # Generación del árbol
+        # GeneraciÃ³n del Ã¡rbol
         users_good_bad_rpart <- rpart(formula, data = users_good_bad_train, control = rpart.control(minsplit= 50, maxdepth = 10))
         
-        # Visualización
+        # VisualizaciÃ³n
         rpart.plot(users_good_bad_rpart, type=0, extra=104, varlen=0, faclen=0)
         plotcp(users_good_bad_rpart)
-        # Test del árbol
+        # Test del Ã¡rbol
         users_good_bad_prediction_rpart <- predict(users_good_bad_rpart, newdata = users_good_bad_test, type="class")
         table(users_good_bad_prediction_rpart, users_good_bad_test$good_user)
         round(users_good_bad_rpart$variable.importance,2)
-        round(users_good_bad_rpart$variable.importance,2)
+        # Prune
+        plotcp(users_good_bad_rpart)
+        users_good_bad_rpart_pruned <- prune(users_good_bad_rpart, 0.012)
+        rpart.plot(users_good_bad_rpart_pruned, type=0, extra=104, varlen=0, faclen=0)
+        users_good_bad_prediction_rpart_pruned <- predict(users_good_bad_rpart_pruned, newdata = users_good_bad_test, type="class")
+        table(users_good_bad_prediction_rpart_pruned, users_good_bad_test$success)
+        users_good_bad_rpart_pruned$variable.importance
         
         
 #
-#     Árboles (randomForest)
+#     Ãrboles (randomForest)
 #
         
         users_good_bad_random <- randomForest(formula, data=users_good_bad_train, importance=T, ntree=100, proximity=T)
@@ -922,7 +951,7 @@ set.seed(9182)
 #        
         
         c.legend<-c("rpart =","random forest =","naive Bayes =","svm lineal =","svm radial =")
-        # �rbol
+        # árbol
         pred.users.good_bad.tree <- predict(users_good_bad_rpart, users_good_bad_test[,-13])
         pred <- prediction(pred.users.good_bad.tree[,2], users_good_bad_test[,13])
         perf <- performance(pred, "tpr", "fpr")
@@ -956,68 +985,107 @@ set.seed(9182)
         # leyenda
         legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1),lwd=c(2,2,2,2,2),col=c("red","green","blue","purple","black"))      
         
-#------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------    
 #
-#   Users (users_simple_quality)
+#   Users (users_good_bad, filtered)
 #------------------------------------------------------------------------------------------------------
-#     �rboles (ctree)
-        str(users_simple_quality)
-        
-        # Separar info en training y test:
-        sets <- sample(2, nrow(users_simple_quality), replace = TRUE, prob = c(0.7, 0.3)) 
-        users_simple_quality_train <- users_simple_quality[sets == 1, ]
-        users_simple_quality_test <- users_simple_quality[sets == 2, ]
-        
-        # Definir la variable objetivo junto con las variables que en teoría la afectarán
-        formula <- quality ~ genero + recruitments + concursos_participados + premios_canjeados + edad + sistema_registro + densidad_videos + calidad_videos + densidad_concursos
-        
-        # Generación del árbol
-        users_simple_quality_ctree <- ctree(formula, data = users_simple_quality_train)
-        
-        # Capacidad clasificadora del árbol
-        table(predict(users_simple_quality_ctree), users_simple_quality_train$quality)
-        
-        # Visualización
-        plot(users_simple_quality_ctree)
-        plot(users_simple_quality_ctree, type ="simple")
-        
-        # Test del árbol
-        users_simple_quality_prediction <- predict(users_simple_quality_ctree, newdata = users_simple_quality_test)
-        table(users_simple_quality_prediction, users_simple_quality_test$quality)
-        
+
 #        
-#     Árboles (rpart)
+#     Ãrboles (rpart)
+        #
+        
+        # Definir la variable objetivo junto con las variables que en teorÃ�a la afectarÃ¡n
+        formula <- good_user ~ genero + edad + sistema_registro + densidad_videos + calidad_videos + densidad_concursos
+        
+        # GeneraciÃ³n del Ã¡rbol
+        users_good_bad_filtered_rpart <- rpart(formula, data = users_good_bad_train, control = rpart.control(minsplit= 50, maxdepth = 10))
+        
+        # VisualizaciÃ³n
+        rpart.plot(users_good_bad_filtered_rpart, type=0, extra=104, varlen=0, faclen=0)
+        plotcp(users_good_bad_filtered_rpart)
+        # Test del Ã¡rbol
+        users_good_bad_filtered_prediction_rpart <- predict(users_good_bad_filtered_rpart, newdata = users_good_bad_test, type="class")
+        table(users_good_bad_filtered_prediction_rpart, users_good_bad_test$good_user)
+        round(users_good_bad_filtered_rpart$variable.importance,2)
+        
+        # Prune
+        plotcp(users_good_bad_filtered_rpart)
+        users_good_bad_filtered_rpart_pruned <- prune(users_good_bad_filtered_rpart, 0.012)
+        rpart.plot(users_good_bad_filtered_rpart_pruned, type=0, extra=104, varlen=0, faclen=0)
+        users_good_bad_filtered_prediction_rpart_pruned <- predict(users_good_bad_filtered_rpart_pruned, newdata = users_good_bad_test, type="class")
+        table(users_good_bad_filtered_prediction_rpart_pruned, users_good_bad_test$good_user)
+        round(users_good_bad_filtered_rpart_pruned$variable.importance,2)
+        
+#
+#     Ãrboles (randomForest)
 #
         
-        # Definir la variable objetivo junto con las variables que en teoría la afectarán
-        formula <- quality ~ genero + recruitments + concursos_participados + premios_canjeados + edad + sistema_registro + densidad_videos + calidad_videos + densidad_concursos
-        
-        # Generación del árbol
-        users_simple_quality_rpart <- rpart(formula, data = users_simple_quality_train, control = rpart.control(minsplit= 100, maxdepth = 10))
-        
-        # Visualización
-        rpart.plot(users_simple_quality_rpart, type=0, extra=104, varlen=0, faclen=0)
-        
-        # Test del árbol
-        users_simple_quality_prediction_rpart <- predict(users_simple_quality_rpart, newdata = users_simple_quality_test, type="class")
-        table(users_simple_quality_prediction_rpart, users_simple_quality_test$quality)
-        
-#        
-#     Árboles (randomForest)
-#        
-        
-        users_simple_quality_random <- randomForest(formula, data=users_simple_quality_train, ntree=100, proximity=T)
-        table(predict(users_simple_quality_random), users_simple_quality_train$quality)
-        plot(users_simple_quality_random)
-        print(users_simple_quality_random)
-        importance(users_simple_quality_random)
+        users_good_bad_filtered_random <- randomForest(formula, data=users_good_bad_train, importance=T, ntree=100, proximity=T)
+        table(predict(users_good_bad_filtered_random, newdata=users_good_bad_test), users_good_bad_test$good_user)
+        plot(users_good_bad_filtered_random)
+        print(users_good_bad_filtered_random)
+        round(importance(users_good_bad_filtered_random),2)
         
 #    
 #     Naive bayes
 #     
         
-        users_simple_quality_bayes <- naiveBayes(formula, data=users_simple_quality_train)
-        table(predict(users_simple_quality_bayes, users_simple_quality_test, type=c("class")), users_simple_quality_test$quality)  
+        users_good_bad_filtered_bayes <- naiveBayes(formula, data=users_good_bad_train)
+        table(predict(users_good_bad_filtered_bayes, users_good_bad_test, type=c("class")), users_good_bad_test$good_user)
+        
+        
+        
+#
+#     SVM
+#
+        
+        users_good_bad_filtered_svm_linear <- svm(formula, data = users_good_bad_train, kernel="linear",probability = TRUE)
+        users_good_bad_filtered_svm_radial <- svm(formula, data = users_good_bad_train, kernel="radial",probability = TRUE)
+        pred.users.good_bad.svm.linear <- predict(users_good_bad_filtered_svm_linear, users_good_bad_test, probability = TRUE)
+        pred.users.good_bad.svm.radial <- predict(users_good_bad_filtered_svm_radial, users_good_bad_test, probability = TRUE)
+        table(predict(users_good_bad_filtered_svm_linear, users_good_bad_test), users_good_bad_test$good_user)
+        table(predict(users_good_bad_filtered_svm_radial, users_good_bad_test), users_good_bad_test$good_user)
+        attr(pred.users.good_bad.svm.linear, "probabilities")[1:6,]
+        attr(pred.users.good_bad.svm.radial, "probabilities")[1:6,]
+        
+#
+#     ROC
+#        
+        
+        c.legend<-c("rpart =","random forest =","naive Bayes =","svm lineal =","svm radial =")
+        # árbol
+        pred.users.good_bad_filtered.tree <- predict(users_good_bad_filtered_rpart, users_good_bad_test[,-13])
+        pred <- prediction(pred.users.good_bad_filtered.tree[,2], users_good_bad_test[,13])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,col="red",lwd=2)
+        c.legend[1]<-paste(c.legend[1],round((performance(pred,"auc")@y.values)[[1]],3))
+        # random forest
+        pred.users.good_bad_filtered.forest <- predict(users_good_bad_filtered_random, users_good_bad_test[,-13],type="prob")
+        pred <- prediction(pred.users.good_bad_filtered.forest[,2], users_good_bad_test[,13])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="green",lwd=2)
+        c.legend[2]<-paste(c.legend[2],round((performance(pred,"auc")@y.values)[[1]],3))
+        # bayes
+        pred.users.good_bad_filtered.bayes <- predict(users_good_bad_filtered_bayes, users_good_bad_test[,-13],type="raw")
+        pred <- prediction(pred.users.good_bad_filtered.bayes[,2], users_good_bad_test[,13])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="blue",lwd=2)
+        c.legend[3]<-paste(c.legend[3],round((performance(pred,"auc")@y.values)[[1]],3))
+        # SVM lineal
+        pred.users.good_bad_filtered.svm.linear <- predict(users_good_bad_filtered_svm_linear, users_good_bad_test, probability = TRUE)
+        pred <- prediction(attr(pred.users.good_bad_filtered.svm.linear, "probabilities")[,2], users_good_bad_test[,13])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="purple",lwd=2)
+        c.legend[4]<-paste(c.legend[4],round((performance(pred,"auc")@y.values)[[1]],3))
+        # SVM radial
+        pred.users.good_bad_filtered.svm.radial <- predict(users_good_bad_filtered_svm_radial, users_good_bad_test, probability = TRUE)
+        pred <- prediction(attr(pred.users.good_bad_filtered.svm.radial, "probabilities")[,2], users_good_bad_test[,13])
+        perf <- performance(pred, "tpr", "fpr")
+        plot(perf,add=TRUE,col="black",lwd=2)
+        c.legend[5]<-paste(c.legend[5],round((performance(pred,"auc")@y.values)[[1]],3))
+        
+        # leyenda
+        legend(0.5,0.6, c.legend,lty=c(1,1,1,1,1),lwd=c(2,2,2,2,2),col=c("red","green","blue","purple","black"))   
         
 #------------------------------------------------------------------------------------------------------
 # Poda (prune)
@@ -1028,7 +1096,7 @@ set.seed(9182)
 # pruned_users_quality_ctree <- nodeprune(users_quality_ctree, ids = iid[pval > 1e-5])
 #
         
-    # Árboles y Bayes
+    # Ãrboles y Bayes
       
       #  
       #   Active users
@@ -1049,7 +1117,7 @@ set.seed(9182)
         
       
       #        
-      #   Penetración
+      #   PenetraciÃ³n
       #
       #     Ctree
               plot(videos_penetracion_ctree)
